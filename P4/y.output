@@ -1,0 +1,2897 @@
+Estado 160 conflictos: 1 desplazamiento/reducción
+
+
+Gramática
+
+    0 $accept: programa $end
+
+    1 programa: PRINCIPAL PAR_IZQUIERDO PAR_DERECHO bloque
+
+    2 $@1: %empty
+
+    3 bloque: INICIOBLOQUE $@1 Declar_de_variables_locales Declar_de_subprogs Sentencias FINBLOQUE
+
+    4 Declar_de_subprogs: Declar_de_subprogs Declar_subprog
+    5                   | %empty
+
+    6 $@2: %empty
+
+    7 $@3: %empty
+
+    8 Declar_subprog: PROCEDIMIENTO IDENT $@2 PAR_IZQUIERDO lista_expresiones PAR_DERECHO $@3 bloque
+
+    9 Declar_de_variables_locales: INI_VARLOCAL variables_locales FIN_VARLOCAL
+   10                            | %empty
+
+   11 variables_locales: variables_locales cuerpo_declar_variables
+   12                  | cuerpo_declar_variables
+
+   13 $@4: %empty
+
+   14 cuerpo_declar_variables: TIPO_BASICOS $@4 lista_identificadores PYC
+   15                        | error
+
+   16 lista_identificadores: lista_identificadores COMA identificador
+   17                      | identificador
+
+   18 Tipo_vector: IDENT CORCHETE_IZQ ENTERO CORCHETE_DCHO
+
+   19 Tipo_matriz: IDENT CORCHETE_IZQ ENTERO COMA ENTERO CORCHETE_DCHO
+
+   20 Sentencias: Sentencias Sentencia
+   21           | Sentencia
+
+   22 Sentencia: bloque
+   23          | sentencia_asignacion
+   24          | sentencia_if
+   25          | sentencia_while
+   26          | sentencia_entrada
+   27          | sentencia_salida
+   28          | sentencia_proc
+   29          | sentencia_case_switch
+
+   30 sentencia_asignacion: identificador ASIGNACION expresion PYC
+   31                     | error
+
+   32 sentencia_if: SI PAR_IZQUIERDO expresion PAR_DERECHO Sentencia
+   33             | SI PAR_IZQUIERDO expresion PAR_DERECHO Sentencia SI_NO Sentencia
+
+   34 sentencia_while: MIENTRAS PAR_IZQUIERDO expresion PAR_DERECHO Sentencia
+
+   35 sentencia_entrada: ENTRADA lista_entrada PYC
+
+   36 sentencia_salida: SALIDA lista_expresiones_o_cadena PYC
+
+   37 lista_entrada: lista_entrada COMA identificador
+   38              | identificador
+
+   39 lista_expresiones_o_cadena: lista_expresiones_o_cadena COMA expresion
+   40                           | lista_expresiones_o_cadena COMA CADENA
+   41                           | expresion
+   42                           | CADENA
+
+   43 sentencia_case_switch: ELEGIR expresion INICIOBLOQUE Casos FINBLOQUE
+
+   44 Casos: Casos Bloque_de_caso
+   45      | Bloque_de_caso
+
+   46 Bloque_de_caso: CASO constante DOSPUNTOS Sentencias SALIR PYC
+   47               | CASO constante DOSPUNTOS Sentencias
+   48               | BASE DOSPUNTOS Sentencias SALIR PYC
+   49               | BASE Sentencias
+
+   50 sentencia_proc: IDENT PAR_IZQUIERDO argumentos PAR_DERECHO PYC
+
+   51 argumentos: lista_argumentos
+   52           | %empty
+
+   53 lista_argumentos: lista_argumentos COMA expresion
+   54                 | expresion
+
+   55 lista_expresiones: lista_expresiones COMA expresion
+   56                  | expresion
+   57                  | %empty
+
+   58 expresion: PAR_IZQUIERDO expresion PAR_DERECHO
+   59          | OPUNARIO expresion
+   60          | MAS_MENOS expresion
+   61          | expresion OPMULDIV expresion
+   62          | expresion OPIGUAL expresion
+   63          | expresion OPREL expresion
+   64          | expresion OPAND expresion
+   65          | expresion OPOR expresion
+   66          | expresion OPSOR expresion
+   67          | expresion OPMAT expresion
+   68          | expresion MAS_MENOS expresion
+   69          | identificador
+   70          | constante
+   71          | TIPO_BASICOS identificador
+   72          | error
+
+   73 constante: ENTERO
+   74          | REAL
+   75          | VAL_LOGICOS
+   76          | CARACTER
+   77          | vector
+   78          | matriz
+
+   79 vector: CORCHETE_IZQ lista_enteros CORCHETE_DCHO
+   80       | CORCHETE_IZQ lista_caracteres CORCHETE_DCHO
+   81       | CORCHETE_IZQ lista_booleanos CORCHETE_DCHO
+   82       | CORCHETE_IZQ lista_reales CORCHETE_DCHO
+
+   83 lista_enteros: lista_enteros COMA ENTERO
+   84              | ENTERO
+
+   85 lista_caracteres: lista_caracteres COMA CARACTER
+   86                 | CARACTER
+
+   87 lista_booleanos: lista_booleanos COMA VAL_LOGICOS
+   88                | VAL_LOGICOS
+
+   89 lista_reales: lista_reales COMA REAL
+   90             | REAL
+
+   91 matriz: INICIOBLOQUE matriz_enteros FINBLOQUE
+   92       | INICIOBLOQUE matriz_caracteres FINBLOQUE
+   93       | INICIOBLOQUE matriz_booleanos FINBLOQUE
+   94       | INICIOBLOQUE matriz_reales FINBLOQUE
+
+   95 matriz_enteros: matriz_enteros COMA CORCHETE_IZQ lista_enteros CORCHETE_DCHO
+   96               | CORCHETE_IZQ lista_enteros CORCHETE_DCHO
+
+   97 matriz_caracteres: matriz_caracteres COMA CORCHETE_IZQ lista_caracteres CORCHETE_DCHO
+   98                  | CORCHETE_IZQ lista_caracteres CORCHETE_DCHO
+
+   99 matriz_booleanos: matriz_booleanos COMA CORCHETE_IZQ lista_booleanos CORCHETE_DCHO
+  100                 | CORCHETE_IZQ lista_booleanos CORCHETE_DCHO
+
+  101 matriz_reales: matriz_reales COMA CORCHETE_IZQ lista_reales CORCHETE_DCHO
+  102              | CORCHETE_IZQ lista_reales CORCHETE_DCHO
+
+  103 identificador: IDENT
+  104              | Tipo_vector
+  105              | Tipo_matriz
+
+
+Terminales con las reglas donde aparecen
+
+    $end (0) 0
+    error (256) 15 31 72
+    PRINCIPAL (258) 1
+    PROCEDIMIENTO (259) 8
+    INICIOBLOQUE (260) 3 43 91 92 93 94
+    FINBLOQUE (261) 3 43 91 92 93 94
+    PYC (262) 14 30 35 36 46 48 50
+    COMA (263) 16 19 37 39 40 53 55 83 85 87 89 95 97 99 101
+    PAR_IZQUIERDO (264) 1 8 32 33 34 50 58
+    PAR_DERECHO (265) 1 8 32 33 34 50 58
+    INI_VARLOCAL (266) 9
+    FIN_VARLOCAL (267) 9
+    TIPO_BASICOS (268) 14 71
+    ASIGNACION (269) 30
+    CORCHETE_IZQ (270) 18 19 79 80 81 82 95 96 97 98 99 100 101 102
+    CORCHETE_DCHO (271) 18 19 79 80 81 82 95 96 97 98 99 100 101 102
+    SI (272) 32 33
+    SI_NO (273) 33
+    MIENTRAS (274) 34
+    ENTRADA (275) 35
+    SALIDA (276) 36
+    ELEGIR (277) 43
+    CASO (278) 46 47
+    SALIR (279) 46 48
+    VAL_LOGICOS (280) 75 87 88
+    ENTERO (281) 18 19 73 83 84
+    REAL (282) 74 89 90
+    CARACTER (283) 76 85 86
+    CADENA (284) 40 42
+    IDENT (285) 8 18 19 50 103
+    BASE (286) 48 49
+    DOSPUNTOS (287) 46 47 48
+    OPOR (288) 65
+    OPAND (289) 64
+    OPSOR (290) 66
+    OPIGUAL (291) 62
+    OPREL (292) 63
+    MAS_MENOS (293) 60 68
+    OPMAT (294) 67
+    OPMULDIV (295) 61
+    OPUNARIO (296) 59
+
+
+No terminales con las reglas donde aparecen
+
+    $accept (42)
+        on left: 0
+    programa (43)
+        on left: 1
+        on right: 0
+    bloque (44)
+        on left: 3
+        on right: 1 8 22
+    $@1 (45)
+        on left: 2
+        on right: 3
+    Declar_de_subprogs (46)
+        on left: 4 5
+        on right: 3 4
+    Declar_subprog (47)
+        on left: 8
+        on right: 4
+    $@2 (48)
+        on left: 6
+        on right: 8
+    $@3 (49)
+        on left: 7
+        on right: 8
+    Declar_de_variables_locales (50)
+        on left: 9 10
+        on right: 3
+    variables_locales (51)
+        on left: 11 12
+        on right: 9 11
+    cuerpo_declar_variables (52)
+        on left: 14 15
+        on right: 11 12
+    $@4 (53)
+        on left: 13
+        on right: 14
+    lista_identificadores (54)
+        on left: 16 17
+        on right: 14 16
+    Tipo_vector (55)
+        on left: 18
+        on right: 104
+    Tipo_matriz (56)
+        on left: 19
+        on right: 105
+    Sentencias (57)
+        on left: 20 21
+        on right: 3 20 46 47 48 49
+    Sentencia (58)
+        on left: 22 23 24 25 26 27 28 29
+        on right: 20 21 32 33 34
+    sentencia_asignacion (59)
+        on left: 30 31
+        on right: 23
+    sentencia_if (60)
+        on left: 32 33
+        on right: 24
+    sentencia_while (61)
+        on left: 34
+        on right: 25
+    sentencia_entrada (62)
+        on left: 35
+        on right: 26
+    sentencia_salida (63)
+        on left: 36
+        on right: 27
+    lista_entrada (64)
+        on left: 37 38
+        on right: 35 37
+    lista_expresiones_o_cadena (65)
+        on left: 39 40 41 42
+        on right: 36 39 40
+    sentencia_case_switch (66)
+        on left: 43
+        on right: 29
+    Casos (67)
+        on left: 44 45
+        on right: 43 44
+    Bloque_de_caso (68)
+        on left: 46 47 48 49
+        on right: 44 45
+    sentencia_proc (69)
+        on left: 50
+        on right: 28
+    argumentos (70)
+        on left: 51 52
+        on right: 50
+    lista_argumentos (71)
+        on left: 53 54
+        on right: 51 53
+    lista_expresiones (72)
+        on left: 55 56 57
+        on right: 8 55
+    expresion (73)
+        on left: 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72
+        on right: 30 32 33 34 39 41 43 53 54 55 56 58 59 60 61 62 63 64 65 66 67 68
+    constante (74)
+        on left: 73 74 75 76 77 78
+        on right: 46 47 70
+    vector (75)
+        on left: 79 80 81 82
+        on right: 77
+    lista_enteros (76)
+        on left: 83 84
+        on right: 79 83 95 96
+    lista_caracteres (77)
+        on left: 85 86
+        on right: 80 85 97 98
+    lista_booleanos (78)
+        on left: 87 88
+        on right: 81 87 99 100
+    lista_reales (79)
+        on left: 89 90
+        on right: 82 89 101 102
+    matriz (80)
+        on left: 91 92 93 94
+        on right: 78
+    matriz_enteros (81)
+        on left: 95 96
+        on right: 91 95
+    matriz_caracteres (82)
+        on left: 97 98
+        on right: 92 97
+    matriz_booleanos (83)
+        on left: 99 100
+        on right: 93 99
+    matriz_reales (84)
+        on left: 101 102
+        on right: 94 101
+    identificador (85)
+        on left: 103 104 105
+        on right: 16 17 30 37 38 69 71
+
+
+Estado 0
+
+    0 $accept: . programa $end
+
+    PRINCIPAL  desplazar e ir al estado 1
+
+    programa  ir al estado 2
+
+
+Estado 1
+
+    1 programa: PRINCIPAL . PAR_IZQUIERDO PAR_DERECHO bloque
+
+    PAR_IZQUIERDO  desplazar e ir al estado 3
+
+
+Estado 2
+
+    0 $accept: programa . $end
+
+    $end  desplazar e ir al estado 4
+
+
+Estado 3
+
+    1 programa: PRINCIPAL PAR_IZQUIERDO . PAR_DERECHO bloque
+
+    PAR_DERECHO  desplazar e ir al estado 5
+
+
+Estado 4
+
+    0 $accept: programa $end .
+
+    $default  aceptar
+
+
+Estado 5
+
+    1 programa: PRINCIPAL PAR_IZQUIERDO PAR_DERECHO . bloque
+
+    INICIOBLOQUE  desplazar e ir al estado 6
+
+    bloque  ir al estado 7
+
+
+Estado 6
+
+    3 bloque: INICIOBLOQUE . $@1 Declar_de_variables_locales Declar_de_subprogs Sentencias FINBLOQUE
+
+    $default  reduce usando la regla 2 ($@1)
+
+    $@1  ir al estado 8
+
+
+Estado 7
+
+    1 programa: PRINCIPAL PAR_IZQUIERDO PAR_DERECHO bloque .
+
+    $default  reduce usando la regla 1 (programa)
+
+
+Estado 8
+
+    3 bloque: INICIOBLOQUE $@1 . Declar_de_variables_locales Declar_de_subprogs Sentencias FINBLOQUE
+
+    INI_VARLOCAL  desplazar e ir al estado 9
+
+    $default  reduce usando la regla 10 (Declar_de_variables_locales)
+
+    Declar_de_variables_locales  ir al estado 10
+
+
+Estado 9
+
+    9 Declar_de_variables_locales: INI_VARLOCAL . variables_locales FIN_VARLOCAL
+
+    error         desplazar e ir al estado 11
+    TIPO_BASICOS  desplazar e ir al estado 12
+
+    variables_locales        ir al estado 13
+    cuerpo_declar_variables  ir al estado 14
+
+
+Estado 10
+
+    3 bloque: INICIOBLOQUE $@1 Declar_de_variables_locales . Declar_de_subprogs Sentencias FINBLOQUE
+
+    $default  reduce usando la regla 5 (Declar_de_subprogs)
+
+    Declar_de_subprogs  ir al estado 15
+
+
+Estado 11
+
+   15 cuerpo_declar_variables: error .
+
+    $default  reduce usando la regla 15 (cuerpo_declar_variables)
+
+
+Estado 12
+
+   14 cuerpo_declar_variables: TIPO_BASICOS . $@4 lista_identificadores PYC
+
+    $default  reduce usando la regla 13 ($@4)
+
+    $@4  ir al estado 16
+
+
+Estado 13
+
+    9 Declar_de_variables_locales: INI_VARLOCAL variables_locales . FIN_VARLOCAL
+   11 variables_locales: variables_locales . cuerpo_declar_variables
+
+    error         desplazar e ir al estado 11
+    FIN_VARLOCAL  desplazar e ir al estado 17
+    TIPO_BASICOS  desplazar e ir al estado 12
+
+    cuerpo_declar_variables  ir al estado 18
+
+
+Estado 14
+
+   12 variables_locales: cuerpo_declar_variables .
+
+    $default  reduce usando la regla 12 (variables_locales)
+
+
+Estado 15
+
+    3 bloque: INICIOBLOQUE $@1 Declar_de_variables_locales Declar_de_subprogs . Sentencias FINBLOQUE
+    4 Declar_de_subprogs: Declar_de_subprogs . Declar_subprog
+
+    error          desplazar e ir al estado 19
+    PROCEDIMIENTO  desplazar e ir al estado 20
+    INICIOBLOQUE   desplazar e ir al estado 6
+    SI             desplazar e ir al estado 21
+    MIENTRAS       desplazar e ir al estado 22
+    ENTRADA        desplazar e ir al estado 23
+    SALIDA         desplazar e ir al estado 24
+    ELEGIR         desplazar e ir al estado 25
+    IDENT          desplazar e ir al estado 26
+
+    bloque                 ir al estado 27
+    Declar_subprog         ir al estado 28
+    Tipo_vector            ir al estado 29
+    Tipo_matriz            ir al estado 30
+    Sentencias             ir al estado 31
+    Sentencia              ir al estado 32
+    sentencia_asignacion   ir al estado 33
+    sentencia_if           ir al estado 34
+    sentencia_while        ir al estado 35
+    sentencia_entrada      ir al estado 36
+    sentencia_salida       ir al estado 37
+    sentencia_case_switch  ir al estado 38
+    sentencia_proc         ir al estado 39
+    identificador          ir al estado 40
+
+
+Estado 16
+
+   14 cuerpo_declar_variables: TIPO_BASICOS $@4 . lista_identificadores PYC
+
+    IDENT  desplazar e ir al estado 41
+
+    lista_identificadores  ir al estado 42
+    Tipo_vector            ir al estado 29
+    Tipo_matriz            ir al estado 30
+    identificador          ir al estado 43
+
+
+Estado 17
+
+    9 Declar_de_variables_locales: INI_VARLOCAL variables_locales FIN_VARLOCAL .
+
+    $default  reduce usando la regla 9 (Declar_de_variables_locales)
+
+
+Estado 18
+
+   11 variables_locales: variables_locales cuerpo_declar_variables .
+
+    $default  reduce usando la regla 11 (variables_locales)
+
+
+Estado 19
+
+   31 sentencia_asignacion: error .
+
+    $default  reduce usando la regla 31 (sentencia_asignacion)
+
+
+Estado 20
+
+    8 Declar_subprog: PROCEDIMIENTO . IDENT $@2 PAR_IZQUIERDO lista_expresiones PAR_DERECHO $@3 bloque
+
+    IDENT  desplazar e ir al estado 44
+
+
+Estado 21
+
+   32 sentencia_if: SI . PAR_IZQUIERDO expresion PAR_DERECHO Sentencia
+   33             | SI . PAR_IZQUIERDO expresion PAR_DERECHO Sentencia SI_NO Sentencia
+
+    PAR_IZQUIERDO  desplazar e ir al estado 45
+
+
+Estado 22
+
+   34 sentencia_while: MIENTRAS . PAR_IZQUIERDO expresion PAR_DERECHO Sentencia
+
+    PAR_IZQUIERDO  desplazar e ir al estado 46
+
+
+Estado 23
+
+   35 sentencia_entrada: ENTRADA . lista_entrada PYC
+
+    IDENT  desplazar e ir al estado 41
+
+    Tipo_vector    ir al estado 29
+    Tipo_matriz    ir al estado 30
+    lista_entrada  ir al estado 47
+    identificador  ir al estado 48
+
+
+Estado 24
+
+   36 sentencia_salida: SALIDA . lista_expresiones_o_cadena PYC
+
+    error          desplazar e ir al estado 49
+    INICIOBLOQUE   desplazar e ir al estado 50
+    PAR_IZQUIERDO  desplazar e ir al estado 51
+    TIPO_BASICOS   desplazar e ir al estado 52
+    CORCHETE_IZQ   desplazar e ir al estado 53
+    VAL_LOGICOS    desplazar e ir al estado 54
+    ENTERO         desplazar e ir al estado 55
+    REAL           desplazar e ir al estado 56
+    CARACTER       desplazar e ir al estado 57
+    CADENA         desplazar e ir al estado 58
+    IDENT          desplazar e ir al estado 41
+    MAS_MENOS      desplazar e ir al estado 59
+    OPUNARIO       desplazar e ir al estado 60
+
+    Tipo_vector                 ir al estado 29
+    Tipo_matriz                 ir al estado 30
+    lista_expresiones_o_cadena  ir al estado 61
+    expresion                   ir al estado 62
+    constante                   ir al estado 63
+    vector                      ir al estado 64
+    matriz                      ir al estado 65
+    identificador               ir al estado 66
+
+
+Estado 25
+
+   43 sentencia_case_switch: ELEGIR . expresion INICIOBLOQUE Casos FINBLOQUE
+
+    error          desplazar e ir al estado 49
+    INICIOBLOQUE   desplazar e ir al estado 50
+    PAR_IZQUIERDO  desplazar e ir al estado 51
+    TIPO_BASICOS   desplazar e ir al estado 52
+    CORCHETE_IZQ   desplazar e ir al estado 53
+    VAL_LOGICOS    desplazar e ir al estado 54
+    ENTERO         desplazar e ir al estado 55
+    REAL           desplazar e ir al estado 56
+    CARACTER       desplazar e ir al estado 57
+    IDENT          desplazar e ir al estado 41
+    MAS_MENOS      desplazar e ir al estado 59
+    OPUNARIO       desplazar e ir al estado 60
+
+    Tipo_vector    ir al estado 29
+    Tipo_matriz    ir al estado 30
+    expresion      ir al estado 67
+    constante      ir al estado 63
+    vector         ir al estado 64
+    matriz         ir al estado 65
+    identificador  ir al estado 66
+
+
+Estado 26
+
+   18 Tipo_vector: IDENT . CORCHETE_IZQ ENTERO CORCHETE_DCHO
+   19 Tipo_matriz: IDENT . CORCHETE_IZQ ENTERO COMA ENTERO CORCHETE_DCHO
+   50 sentencia_proc: IDENT . PAR_IZQUIERDO argumentos PAR_DERECHO PYC
+  103 identificador: IDENT .
+
+    PAR_IZQUIERDO  desplazar e ir al estado 68
+    CORCHETE_IZQ   desplazar e ir al estado 69
+
+    $default  reduce usando la regla 103 (identificador)
+
+
+Estado 27
+
+   22 Sentencia: bloque .
+
+    $default  reduce usando la regla 22 (Sentencia)
+
+
+Estado 28
+
+    4 Declar_de_subprogs: Declar_de_subprogs Declar_subprog .
+
+    $default  reduce usando la regla 4 (Declar_de_subprogs)
+
+
+Estado 29
+
+  104 identificador: Tipo_vector .
+
+    $default  reduce usando la regla 104 (identificador)
+
+
+Estado 30
+
+  105 identificador: Tipo_matriz .
+
+    $default  reduce usando la regla 105 (identificador)
+
+
+Estado 31
+
+    3 bloque: INICIOBLOQUE $@1 Declar_de_variables_locales Declar_de_subprogs Sentencias . FINBLOQUE
+   20 Sentencias: Sentencias . Sentencia
+
+    error         desplazar e ir al estado 19
+    INICIOBLOQUE  desplazar e ir al estado 6
+    FINBLOQUE     desplazar e ir al estado 70
+    SI            desplazar e ir al estado 21
+    MIENTRAS      desplazar e ir al estado 22
+    ENTRADA       desplazar e ir al estado 23
+    SALIDA        desplazar e ir al estado 24
+    ELEGIR        desplazar e ir al estado 25
+    IDENT         desplazar e ir al estado 26
+
+    bloque                 ir al estado 27
+    Tipo_vector            ir al estado 29
+    Tipo_matriz            ir al estado 30
+    Sentencia              ir al estado 71
+    sentencia_asignacion   ir al estado 33
+    sentencia_if           ir al estado 34
+    sentencia_while        ir al estado 35
+    sentencia_entrada      ir al estado 36
+    sentencia_salida       ir al estado 37
+    sentencia_case_switch  ir al estado 38
+    sentencia_proc         ir al estado 39
+    identificador          ir al estado 40
+
+
+Estado 32
+
+   21 Sentencias: Sentencia .
+
+    $default  reduce usando la regla 21 (Sentencias)
+
+
+Estado 33
+
+   23 Sentencia: sentencia_asignacion .
+
+    $default  reduce usando la regla 23 (Sentencia)
+
+
+Estado 34
+
+   24 Sentencia: sentencia_if .
+
+    $default  reduce usando la regla 24 (Sentencia)
+
+
+Estado 35
+
+   25 Sentencia: sentencia_while .
+
+    $default  reduce usando la regla 25 (Sentencia)
+
+
+Estado 36
+
+   26 Sentencia: sentencia_entrada .
+
+    $default  reduce usando la regla 26 (Sentencia)
+
+
+Estado 37
+
+   27 Sentencia: sentencia_salida .
+
+    $default  reduce usando la regla 27 (Sentencia)
+
+
+Estado 38
+
+   29 Sentencia: sentencia_case_switch .
+
+    $default  reduce usando la regla 29 (Sentencia)
+
+
+Estado 39
+
+   28 Sentencia: sentencia_proc .
+
+    $default  reduce usando la regla 28 (Sentencia)
+
+
+Estado 40
+
+   30 sentencia_asignacion: identificador . ASIGNACION expresion PYC
+
+    ASIGNACION  desplazar e ir al estado 72
+
+
+Estado 41
+
+   18 Tipo_vector: IDENT . CORCHETE_IZQ ENTERO CORCHETE_DCHO
+   19 Tipo_matriz: IDENT . CORCHETE_IZQ ENTERO COMA ENTERO CORCHETE_DCHO
+  103 identificador: IDENT .
+
+    CORCHETE_IZQ  desplazar e ir al estado 69
+
+    $default  reduce usando la regla 103 (identificador)
+
+
+Estado 42
+
+   14 cuerpo_declar_variables: TIPO_BASICOS $@4 lista_identificadores . PYC
+   16 lista_identificadores: lista_identificadores . COMA identificador
+
+    PYC   desplazar e ir al estado 73
+    COMA  desplazar e ir al estado 74
+
+
+Estado 43
+
+   17 lista_identificadores: identificador .
+
+    $default  reduce usando la regla 17 (lista_identificadores)
+
+
+Estado 44
+
+    8 Declar_subprog: PROCEDIMIENTO IDENT . $@2 PAR_IZQUIERDO lista_expresiones PAR_DERECHO $@3 bloque
+
+    $default  reduce usando la regla 6 ($@2)
+
+    $@2  ir al estado 75
+
+
+Estado 45
+
+   32 sentencia_if: SI PAR_IZQUIERDO . expresion PAR_DERECHO Sentencia
+   33             | SI PAR_IZQUIERDO . expresion PAR_DERECHO Sentencia SI_NO Sentencia
+
+    error          desplazar e ir al estado 49
+    INICIOBLOQUE   desplazar e ir al estado 50
+    PAR_IZQUIERDO  desplazar e ir al estado 51
+    TIPO_BASICOS   desplazar e ir al estado 52
+    CORCHETE_IZQ   desplazar e ir al estado 53
+    VAL_LOGICOS    desplazar e ir al estado 54
+    ENTERO         desplazar e ir al estado 55
+    REAL           desplazar e ir al estado 56
+    CARACTER       desplazar e ir al estado 57
+    IDENT          desplazar e ir al estado 41
+    MAS_MENOS      desplazar e ir al estado 59
+    OPUNARIO       desplazar e ir al estado 60
+
+    Tipo_vector    ir al estado 29
+    Tipo_matriz    ir al estado 30
+    expresion      ir al estado 76
+    constante      ir al estado 63
+    vector         ir al estado 64
+    matriz         ir al estado 65
+    identificador  ir al estado 66
+
+
+Estado 46
+
+   34 sentencia_while: MIENTRAS PAR_IZQUIERDO . expresion PAR_DERECHO Sentencia
+
+    error          desplazar e ir al estado 49
+    INICIOBLOQUE   desplazar e ir al estado 50
+    PAR_IZQUIERDO  desplazar e ir al estado 51
+    TIPO_BASICOS   desplazar e ir al estado 52
+    CORCHETE_IZQ   desplazar e ir al estado 53
+    VAL_LOGICOS    desplazar e ir al estado 54
+    ENTERO         desplazar e ir al estado 55
+    REAL           desplazar e ir al estado 56
+    CARACTER       desplazar e ir al estado 57
+    IDENT          desplazar e ir al estado 41
+    MAS_MENOS      desplazar e ir al estado 59
+    OPUNARIO       desplazar e ir al estado 60
+
+    Tipo_vector    ir al estado 29
+    Tipo_matriz    ir al estado 30
+    expresion      ir al estado 77
+    constante      ir al estado 63
+    vector         ir al estado 64
+    matriz         ir al estado 65
+    identificador  ir al estado 66
+
+
+Estado 47
+
+   35 sentencia_entrada: ENTRADA lista_entrada . PYC
+   37 lista_entrada: lista_entrada . COMA identificador
+
+    PYC   desplazar e ir al estado 78
+    COMA  desplazar e ir al estado 79
+
+
+Estado 48
+
+   38 lista_entrada: identificador .
+
+    $default  reduce usando la regla 38 (lista_entrada)
+
+
+Estado 49
+
+   72 expresion: error .
+
+    $default  reduce usando la regla 72 (expresion)
+
+
+Estado 50
+
+   91 matriz: INICIOBLOQUE . matriz_enteros FINBLOQUE
+   92       | INICIOBLOQUE . matriz_caracteres FINBLOQUE
+   93       | INICIOBLOQUE . matriz_booleanos FINBLOQUE
+   94       | INICIOBLOQUE . matriz_reales FINBLOQUE
+
+    CORCHETE_IZQ  desplazar e ir al estado 80
+
+    matriz_enteros     ir al estado 81
+    matriz_caracteres  ir al estado 82
+    matriz_booleanos   ir al estado 83
+    matriz_reales      ir al estado 84
+
+
+Estado 51
+
+   58 expresion: PAR_IZQUIERDO . expresion PAR_DERECHO
+
+    error          desplazar e ir al estado 49
+    INICIOBLOQUE   desplazar e ir al estado 50
+    PAR_IZQUIERDO  desplazar e ir al estado 51
+    TIPO_BASICOS   desplazar e ir al estado 52
+    CORCHETE_IZQ   desplazar e ir al estado 53
+    VAL_LOGICOS    desplazar e ir al estado 54
+    ENTERO         desplazar e ir al estado 55
+    REAL           desplazar e ir al estado 56
+    CARACTER       desplazar e ir al estado 57
+    IDENT          desplazar e ir al estado 41
+    MAS_MENOS      desplazar e ir al estado 59
+    OPUNARIO       desplazar e ir al estado 60
+
+    Tipo_vector    ir al estado 29
+    Tipo_matriz    ir al estado 30
+    expresion      ir al estado 85
+    constante      ir al estado 63
+    vector         ir al estado 64
+    matriz         ir al estado 65
+    identificador  ir al estado 66
+
+
+Estado 52
+
+   71 expresion: TIPO_BASICOS . identificador
+
+    IDENT  desplazar e ir al estado 41
+
+    Tipo_vector    ir al estado 29
+    Tipo_matriz    ir al estado 30
+    identificador  ir al estado 86
+
+
+Estado 53
+
+   79 vector: CORCHETE_IZQ . lista_enteros CORCHETE_DCHO
+   80       | CORCHETE_IZQ . lista_caracteres CORCHETE_DCHO
+   81       | CORCHETE_IZQ . lista_booleanos CORCHETE_DCHO
+   82       | CORCHETE_IZQ . lista_reales CORCHETE_DCHO
+
+    VAL_LOGICOS  desplazar e ir al estado 87
+    ENTERO       desplazar e ir al estado 88
+    REAL         desplazar e ir al estado 89
+    CARACTER     desplazar e ir al estado 90
+
+    lista_enteros     ir al estado 91
+    lista_caracteres  ir al estado 92
+    lista_booleanos   ir al estado 93
+    lista_reales      ir al estado 94
+
+
+Estado 54
+
+   75 constante: VAL_LOGICOS .
+
+    $default  reduce usando la regla 75 (constante)
+
+
+Estado 55
+
+   73 constante: ENTERO .
+
+    $default  reduce usando la regla 73 (constante)
+
+
+Estado 56
+
+   74 constante: REAL .
+
+    $default  reduce usando la regla 74 (constante)
+
+
+Estado 57
+
+   76 constante: CARACTER .
+
+    $default  reduce usando la regla 76 (constante)
+
+
+Estado 58
+
+   42 lista_expresiones_o_cadena: CADENA .
+
+    $default  reduce usando la regla 42 (lista_expresiones_o_cadena)
+
+
+Estado 59
+
+   60 expresion: MAS_MENOS . expresion
+
+    error          desplazar e ir al estado 49
+    INICIOBLOQUE   desplazar e ir al estado 50
+    PAR_IZQUIERDO  desplazar e ir al estado 51
+    TIPO_BASICOS   desplazar e ir al estado 52
+    CORCHETE_IZQ   desplazar e ir al estado 53
+    VAL_LOGICOS    desplazar e ir al estado 54
+    ENTERO         desplazar e ir al estado 55
+    REAL           desplazar e ir al estado 56
+    CARACTER       desplazar e ir al estado 57
+    IDENT          desplazar e ir al estado 41
+    MAS_MENOS      desplazar e ir al estado 59
+    OPUNARIO       desplazar e ir al estado 60
+
+    Tipo_vector    ir al estado 29
+    Tipo_matriz    ir al estado 30
+    expresion      ir al estado 95
+    constante      ir al estado 63
+    vector         ir al estado 64
+    matriz         ir al estado 65
+    identificador  ir al estado 66
+
+
+Estado 60
+
+   59 expresion: OPUNARIO . expresion
+
+    error          desplazar e ir al estado 49
+    INICIOBLOQUE   desplazar e ir al estado 50
+    PAR_IZQUIERDO  desplazar e ir al estado 51
+    TIPO_BASICOS   desplazar e ir al estado 52
+    CORCHETE_IZQ   desplazar e ir al estado 53
+    VAL_LOGICOS    desplazar e ir al estado 54
+    ENTERO         desplazar e ir al estado 55
+    REAL           desplazar e ir al estado 56
+    CARACTER       desplazar e ir al estado 57
+    IDENT          desplazar e ir al estado 41
+    MAS_MENOS      desplazar e ir al estado 59
+    OPUNARIO       desplazar e ir al estado 60
+
+    Tipo_vector    ir al estado 29
+    Tipo_matriz    ir al estado 30
+    expresion      ir al estado 96
+    constante      ir al estado 63
+    vector         ir al estado 64
+    matriz         ir al estado 65
+    identificador  ir al estado 66
+
+
+Estado 61
+
+   36 sentencia_salida: SALIDA lista_expresiones_o_cadena . PYC
+   39 lista_expresiones_o_cadena: lista_expresiones_o_cadena . COMA expresion
+   40                           | lista_expresiones_o_cadena . COMA CADENA
+
+    PYC   desplazar e ir al estado 97
+    COMA  desplazar e ir al estado 98
+
+
+Estado 62
+
+   41 lista_expresiones_o_cadena: expresion .
+   61 expresion: expresion . OPMULDIV expresion
+   62          | expresion . OPIGUAL expresion
+   63          | expresion . OPREL expresion
+   64          | expresion . OPAND expresion
+   65          | expresion . OPOR expresion
+   66          | expresion . OPSOR expresion
+   67          | expresion . OPMAT expresion
+   68          | expresion . MAS_MENOS expresion
+
+    OPOR       desplazar e ir al estado 99
+    OPAND      desplazar e ir al estado 100
+    OPSOR      desplazar e ir al estado 101
+    OPIGUAL    desplazar e ir al estado 102
+    OPREL      desplazar e ir al estado 103
+    MAS_MENOS  desplazar e ir al estado 104
+    OPMAT      desplazar e ir al estado 105
+    OPMULDIV   desplazar e ir al estado 106
+
+    $default  reduce usando la regla 41 (lista_expresiones_o_cadena)
+
+
+Estado 63
+
+   70 expresion: constante .
+
+    $default  reduce usando la regla 70 (expresion)
+
+
+Estado 64
+
+   77 constante: vector .
+
+    $default  reduce usando la regla 77 (constante)
+
+
+Estado 65
+
+   78 constante: matriz .
+
+    $default  reduce usando la regla 78 (constante)
+
+
+Estado 66
+
+   69 expresion: identificador .
+
+    $default  reduce usando la regla 69 (expresion)
+
+
+Estado 67
+
+   43 sentencia_case_switch: ELEGIR expresion . INICIOBLOQUE Casos FINBLOQUE
+   61 expresion: expresion . OPMULDIV expresion
+   62          | expresion . OPIGUAL expresion
+   63          | expresion . OPREL expresion
+   64          | expresion . OPAND expresion
+   65          | expresion . OPOR expresion
+   66          | expresion . OPSOR expresion
+   67          | expresion . OPMAT expresion
+   68          | expresion . MAS_MENOS expresion
+
+    INICIOBLOQUE  desplazar e ir al estado 107
+    OPOR          desplazar e ir al estado 99
+    OPAND         desplazar e ir al estado 100
+    OPSOR         desplazar e ir al estado 101
+    OPIGUAL       desplazar e ir al estado 102
+    OPREL         desplazar e ir al estado 103
+    MAS_MENOS     desplazar e ir al estado 104
+    OPMAT         desplazar e ir al estado 105
+    OPMULDIV      desplazar e ir al estado 106
+
+
+Estado 68
+
+   50 sentencia_proc: IDENT PAR_IZQUIERDO . argumentos PAR_DERECHO PYC
+
+    error          desplazar e ir al estado 49
+    INICIOBLOQUE   desplazar e ir al estado 50
+    PAR_IZQUIERDO  desplazar e ir al estado 51
+    TIPO_BASICOS   desplazar e ir al estado 52
+    CORCHETE_IZQ   desplazar e ir al estado 53
+    VAL_LOGICOS    desplazar e ir al estado 54
+    ENTERO         desplazar e ir al estado 55
+    REAL           desplazar e ir al estado 56
+    CARACTER       desplazar e ir al estado 57
+    IDENT          desplazar e ir al estado 41
+    MAS_MENOS      desplazar e ir al estado 59
+    OPUNARIO       desplazar e ir al estado 60
+
+    PAR_DERECHO  reduce usando la regla 52 (argumentos)
+
+    Tipo_vector       ir al estado 29
+    Tipo_matriz       ir al estado 30
+    argumentos        ir al estado 108
+    lista_argumentos  ir al estado 109
+    expresion         ir al estado 110
+    constante         ir al estado 63
+    vector            ir al estado 64
+    matriz            ir al estado 65
+    identificador     ir al estado 66
+
+
+Estado 69
+
+   18 Tipo_vector: IDENT CORCHETE_IZQ . ENTERO CORCHETE_DCHO
+   19 Tipo_matriz: IDENT CORCHETE_IZQ . ENTERO COMA ENTERO CORCHETE_DCHO
+
+    ENTERO  desplazar e ir al estado 111
+
+
+Estado 70
+
+    3 bloque: INICIOBLOQUE $@1 Declar_de_variables_locales Declar_de_subprogs Sentencias FINBLOQUE .
+
+    $default  reduce usando la regla 3 (bloque)
+
+
+Estado 71
+
+   20 Sentencias: Sentencias Sentencia .
+
+    $default  reduce usando la regla 20 (Sentencias)
+
+
+Estado 72
+
+   30 sentencia_asignacion: identificador ASIGNACION . expresion PYC
+
+    error          desplazar e ir al estado 49
+    INICIOBLOQUE   desplazar e ir al estado 50
+    PAR_IZQUIERDO  desplazar e ir al estado 51
+    TIPO_BASICOS   desplazar e ir al estado 52
+    CORCHETE_IZQ   desplazar e ir al estado 53
+    VAL_LOGICOS    desplazar e ir al estado 54
+    ENTERO         desplazar e ir al estado 55
+    REAL           desplazar e ir al estado 56
+    CARACTER       desplazar e ir al estado 57
+    IDENT          desplazar e ir al estado 41
+    MAS_MENOS      desplazar e ir al estado 59
+    OPUNARIO       desplazar e ir al estado 60
+
+    Tipo_vector    ir al estado 29
+    Tipo_matriz    ir al estado 30
+    expresion      ir al estado 112
+    constante      ir al estado 63
+    vector         ir al estado 64
+    matriz         ir al estado 65
+    identificador  ir al estado 66
+
+
+Estado 73
+
+   14 cuerpo_declar_variables: TIPO_BASICOS $@4 lista_identificadores PYC .
+
+    $default  reduce usando la regla 14 (cuerpo_declar_variables)
+
+
+Estado 74
+
+   16 lista_identificadores: lista_identificadores COMA . identificador
+
+    IDENT  desplazar e ir al estado 41
+
+    Tipo_vector    ir al estado 29
+    Tipo_matriz    ir al estado 30
+    identificador  ir al estado 113
+
+
+Estado 75
+
+    8 Declar_subprog: PROCEDIMIENTO IDENT $@2 . PAR_IZQUIERDO lista_expresiones PAR_DERECHO $@3 bloque
+
+    PAR_IZQUIERDO  desplazar e ir al estado 114
+
+
+Estado 76
+
+   32 sentencia_if: SI PAR_IZQUIERDO expresion . PAR_DERECHO Sentencia
+   33             | SI PAR_IZQUIERDO expresion . PAR_DERECHO Sentencia SI_NO Sentencia
+   61 expresion: expresion . OPMULDIV expresion
+   62          | expresion . OPIGUAL expresion
+   63          | expresion . OPREL expresion
+   64          | expresion . OPAND expresion
+   65          | expresion . OPOR expresion
+   66          | expresion . OPSOR expresion
+   67          | expresion . OPMAT expresion
+   68          | expresion . MAS_MENOS expresion
+
+    PAR_DERECHO  desplazar e ir al estado 115
+    OPOR         desplazar e ir al estado 99
+    OPAND        desplazar e ir al estado 100
+    OPSOR        desplazar e ir al estado 101
+    OPIGUAL      desplazar e ir al estado 102
+    OPREL        desplazar e ir al estado 103
+    MAS_MENOS    desplazar e ir al estado 104
+    OPMAT        desplazar e ir al estado 105
+    OPMULDIV     desplazar e ir al estado 106
+
+
+Estado 77
+
+   34 sentencia_while: MIENTRAS PAR_IZQUIERDO expresion . PAR_DERECHO Sentencia
+   61 expresion: expresion . OPMULDIV expresion
+   62          | expresion . OPIGUAL expresion
+   63          | expresion . OPREL expresion
+   64          | expresion . OPAND expresion
+   65          | expresion . OPOR expresion
+   66          | expresion . OPSOR expresion
+   67          | expresion . OPMAT expresion
+   68          | expresion . MAS_MENOS expresion
+
+    PAR_DERECHO  desplazar e ir al estado 116
+    OPOR         desplazar e ir al estado 99
+    OPAND        desplazar e ir al estado 100
+    OPSOR        desplazar e ir al estado 101
+    OPIGUAL      desplazar e ir al estado 102
+    OPREL        desplazar e ir al estado 103
+    MAS_MENOS    desplazar e ir al estado 104
+    OPMAT        desplazar e ir al estado 105
+    OPMULDIV     desplazar e ir al estado 106
+
+
+Estado 78
+
+   35 sentencia_entrada: ENTRADA lista_entrada PYC .
+
+    $default  reduce usando la regla 35 (sentencia_entrada)
+
+
+Estado 79
+
+   37 lista_entrada: lista_entrada COMA . identificador
+
+    IDENT  desplazar e ir al estado 41
+
+    Tipo_vector    ir al estado 29
+    Tipo_matriz    ir al estado 30
+    identificador  ir al estado 117
+
+
+Estado 80
+
+   96 matriz_enteros: CORCHETE_IZQ . lista_enteros CORCHETE_DCHO
+   98 matriz_caracteres: CORCHETE_IZQ . lista_caracteres CORCHETE_DCHO
+  100 matriz_booleanos: CORCHETE_IZQ . lista_booleanos CORCHETE_DCHO
+  102 matriz_reales: CORCHETE_IZQ . lista_reales CORCHETE_DCHO
+
+    VAL_LOGICOS  desplazar e ir al estado 87
+    ENTERO       desplazar e ir al estado 88
+    REAL         desplazar e ir al estado 89
+    CARACTER     desplazar e ir al estado 90
+
+    lista_enteros     ir al estado 118
+    lista_caracteres  ir al estado 119
+    lista_booleanos   ir al estado 120
+    lista_reales      ir al estado 121
+
+
+Estado 81
+
+   91 matriz: INICIOBLOQUE matriz_enteros . FINBLOQUE
+   95 matriz_enteros: matriz_enteros . COMA CORCHETE_IZQ lista_enteros CORCHETE_DCHO
+
+    FINBLOQUE  desplazar e ir al estado 122
+    COMA       desplazar e ir al estado 123
+
+
+Estado 82
+
+   92 matriz: INICIOBLOQUE matriz_caracteres . FINBLOQUE
+   97 matriz_caracteres: matriz_caracteres . COMA CORCHETE_IZQ lista_caracteres CORCHETE_DCHO
+
+    FINBLOQUE  desplazar e ir al estado 124
+    COMA       desplazar e ir al estado 125
+
+
+Estado 83
+
+   93 matriz: INICIOBLOQUE matriz_booleanos . FINBLOQUE
+   99 matriz_booleanos: matriz_booleanos . COMA CORCHETE_IZQ lista_booleanos CORCHETE_DCHO
+
+    FINBLOQUE  desplazar e ir al estado 126
+    COMA       desplazar e ir al estado 127
+
+
+Estado 84
+
+   94 matriz: INICIOBLOQUE matriz_reales . FINBLOQUE
+  101 matriz_reales: matriz_reales . COMA CORCHETE_IZQ lista_reales CORCHETE_DCHO
+
+    FINBLOQUE  desplazar e ir al estado 128
+    COMA       desplazar e ir al estado 129
+
+
+Estado 85
+
+   58 expresion: PAR_IZQUIERDO expresion . PAR_DERECHO
+   61          | expresion . OPMULDIV expresion
+   62          | expresion . OPIGUAL expresion
+   63          | expresion . OPREL expresion
+   64          | expresion . OPAND expresion
+   65          | expresion . OPOR expresion
+   66          | expresion . OPSOR expresion
+   67          | expresion . OPMAT expresion
+   68          | expresion . MAS_MENOS expresion
+
+    PAR_DERECHO  desplazar e ir al estado 130
+    OPOR         desplazar e ir al estado 99
+    OPAND        desplazar e ir al estado 100
+    OPSOR        desplazar e ir al estado 101
+    OPIGUAL      desplazar e ir al estado 102
+    OPREL        desplazar e ir al estado 103
+    MAS_MENOS    desplazar e ir al estado 104
+    OPMAT        desplazar e ir al estado 105
+    OPMULDIV     desplazar e ir al estado 106
+
+
+Estado 86
+
+   71 expresion: TIPO_BASICOS identificador .
+
+    $default  reduce usando la regla 71 (expresion)
+
+
+Estado 87
+
+   88 lista_booleanos: VAL_LOGICOS .
+
+    $default  reduce usando la regla 88 (lista_booleanos)
+
+
+Estado 88
+
+   84 lista_enteros: ENTERO .
+
+    $default  reduce usando la regla 84 (lista_enteros)
+
+
+Estado 89
+
+   90 lista_reales: REAL .
+
+    $default  reduce usando la regla 90 (lista_reales)
+
+
+Estado 90
+
+   86 lista_caracteres: CARACTER .
+
+    $default  reduce usando la regla 86 (lista_caracteres)
+
+
+Estado 91
+
+   79 vector: CORCHETE_IZQ lista_enteros . CORCHETE_DCHO
+   83 lista_enteros: lista_enteros . COMA ENTERO
+
+    COMA           desplazar e ir al estado 131
+    CORCHETE_DCHO  desplazar e ir al estado 132
+
+
+Estado 92
+
+   80 vector: CORCHETE_IZQ lista_caracteres . CORCHETE_DCHO
+   85 lista_caracteres: lista_caracteres . COMA CARACTER
+
+    COMA           desplazar e ir al estado 133
+    CORCHETE_DCHO  desplazar e ir al estado 134
+
+
+Estado 93
+
+   81 vector: CORCHETE_IZQ lista_booleanos . CORCHETE_DCHO
+   87 lista_booleanos: lista_booleanos . COMA VAL_LOGICOS
+
+    COMA           desplazar e ir al estado 135
+    CORCHETE_DCHO  desplazar e ir al estado 136
+
+
+Estado 94
+
+   82 vector: CORCHETE_IZQ lista_reales . CORCHETE_DCHO
+   89 lista_reales: lista_reales . COMA REAL
+
+    COMA           desplazar e ir al estado 137
+    CORCHETE_DCHO  desplazar e ir al estado 138
+
+
+Estado 95
+
+   60 expresion: MAS_MENOS expresion .
+   61          | expresion . OPMULDIV expresion
+   62          | expresion . OPIGUAL expresion
+   63          | expresion . OPREL expresion
+   64          | expresion . OPAND expresion
+   65          | expresion . OPOR expresion
+   66          | expresion . OPSOR expresion
+   67          | expresion . OPMAT expresion
+   68          | expresion . MAS_MENOS expresion
+
+    $default  reduce usando la regla 60 (expresion)
+
+
+Estado 96
+
+   59 expresion: OPUNARIO expresion .
+   61          | expresion . OPMULDIV expresion
+   62          | expresion . OPIGUAL expresion
+   63          | expresion . OPREL expresion
+   64          | expresion . OPAND expresion
+   65          | expresion . OPOR expresion
+   66          | expresion . OPSOR expresion
+   67          | expresion . OPMAT expresion
+   68          | expresion . MAS_MENOS expresion
+
+    $default  reduce usando la regla 59 (expresion)
+
+
+Estado 97
+
+   36 sentencia_salida: SALIDA lista_expresiones_o_cadena PYC .
+
+    $default  reduce usando la regla 36 (sentencia_salida)
+
+
+Estado 98
+
+   39 lista_expresiones_o_cadena: lista_expresiones_o_cadena COMA . expresion
+   40                           | lista_expresiones_o_cadena COMA . CADENA
+
+    error          desplazar e ir al estado 49
+    INICIOBLOQUE   desplazar e ir al estado 50
+    PAR_IZQUIERDO  desplazar e ir al estado 51
+    TIPO_BASICOS   desplazar e ir al estado 52
+    CORCHETE_IZQ   desplazar e ir al estado 53
+    VAL_LOGICOS    desplazar e ir al estado 54
+    ENTERO         desplazar e ir al estado 55
+    REAL           desplazar e ir al estado 56
+    CARACTER       desplazar e ir al estado 57
+    CADENA         desplazar e ir al estado 139
+    IDENT          desplazar e ir al estado 41
+    MAS_MENOS      desplazar e ir al estado 59
+    OPUNARIO       desplazar e ir al estado 60
+
+    Tipo_vector    ir al estado 29
+    Tipo_matriz    ir al estado 30
+    expresion      ir al estado 140
+    constante      ir al estado 63
+    vector         ir al estado 64
+    matriz         ir al estado 65
+    identificador  ir al estado 66
+
+
+Estado 99
+
+   65 expresion: expresion OPOR . expresion
+
+    error          desplazar e ir al estado 49
+    INICIOBLOQUE   desplazar e ir al estado 50
+    PAR_IZQUIERDO  desplazar e ir al estado 51
+    TIPO_BASICOS   desplazar e ir al estado 52
+    CORCHETE_IZQ   desplazar e ir al estado 53
+    VAL_LOGICOS    desplazar e ir al estado 54
+    ENTERO         desplazar e ir al estado 55
+    REAL           desplazar e ir al estado 56
+    CARACTER       desplazar e ir al estado 57
+    IDENT          desplazar e ir al estado 41
+    MAS_MENOS      desplazar e ir al estado 59
+    OPUNARIO       desplazar e ir al estado 60
+
+    Tipo_vector    ir al estado 29
+    Tipo_matriz    ir al estado 30
+    expresion      ir al estado 141
+    constante      ir al estado 63
+    vector         ir al estado 64
+    matriz         ir al estado 65
+    identificador  ir al estado 66
+
+
+Estado 100
+
+   64 expresion: expresion OPAND . expresion
+
+    error          desplazar e ir al estado 49
+    INICIOBLOQUE   desplazar e ir al estado 50
+    PAR_IZQUIERDO  desplazar e ir al estado 51
+    TIPO_BASICOS   desplazar e ir al estado 52
+    CORCHETE_IZQ   desplazar e ir al estado 53
+    VAL_LOGICOS    desplazar e ir al estado 54
+    ENTERO         desplazar e ir al estado 55
+    REAL           desplazar e ir al estado 56
+    CARACTER       desplazar e ir al estado 57
+    IDENT          desplazar e ir al estado 41
+    MAS_MENOS      desplazar e ir al estado 59
+    OPUNARIO       desplazar e ir al estado 60
+
+    Tipo_vector    ir al estado 29
+    Tipo_matriz    ir al estado 30
+    expresion      ir al estado 142
+    constante      ir al estado 63
+    vector         ir al estado 64
+    matriz         ir al estado 65
+    identificador  ir al estado 66
+
+
+Estado 101
+
+   66 expresion: expresion OPSOR . expresion
+
+    error          desplazar e ir al estado 49
+    INICIOBLOQUE   desplazar e ir al estado 50
+    PAR_IZQUIERDO  desplazar e ir al estado 51
+    TIPO_BASICOS   desplazar e ir al estado 52
+    CORCHETE_IZQ   desplazar e ir al estado 53
+    VAL_LOGICOS    desplazar e ir al estado 54
+    ENTERO         desplazar e ir al estado 55
+    REAL           desplazar e ir al estado 56
+    CARACTER       desplazar e ir al estado 57
+    IDENT          desplazar e ir al estado 41
+    MAS_MENOS      desplazar e ir al estado 59
+    OPUNARIO       desplazar e ir al estado 60
+
+    Tipo_vector    ir al estado 29
+    Tipo_matriz    ir al estado 30
+    expresion      ir al estado 143
+    constante      ir al estado 63
+    vector         ir al estado 64
+    matriz         ir al estado 65
+    identificador  ir al estado 66
+
+
+Estado 102
+
+   62 expresion: expresion OPIGUAL . expresion
+
+    error          desplazar e ir al estado 49
+    INICIOBLOQUE   desplazar e ir al estado 50
+    PAR_IZQUIERDO  desplazar e ir al estado 51
+    TIPO_BASICOS   desplazar e ir al estado 52
+    CORCHETE_IZQ   desplazar e ir al estado 53
+    VAL_LOGICOS    desplazar e ir al estado 54
+    ENTERO         desplazar e ir al estado 55
+    REAL           desplazar e ir al estado 56
+    CARACTER       desplazar e ir al estado 57
+    IDENT          desplazar e ir al estado 41
+    MAS_MENOS      desplazar e ir al estado 59
+    OPUNARIO       desplazar e ir al estado 60
+
+    Tipo_vector    ir al estado 29
+    Tipo_matriz    ir al estado 30
+    expresion      ir al estado 144
+    constante      ir al estado 63
+    vector         ir al estado 64
+    matriz         ir al estado 65
+    identificador  ir al estado 66
+
+
+Estado 103
+
+   63 expresion: expresion OPREL . expresion
+
+    error          desplazar e ir al estado 49
+    INICIOBLOQUE   desplazar e ir al estado 50
+    PAR_IZQUIERDO  desplazar e ir al estado 51
+    TIPO_BASICOS   desplazar e ir al estado 52
+    CORCHETE_IZQ   desplazar e ir al estado 53
+    VAL_LOGICOS    desplazar e ir al estado 54
+    ENTERO         desplazar e ir al estado 55
+    REAL           desplazar e ir al estado 56
+    CARACTER       desplazar e ir al estado 57
+    IDENT          desplazar e ir al estado 41
+    MAS_MENOS      desplazar e ir al estado 59
+    OPUNARIO       desplazar e ir al estado 60
+
+    Tipo_vector    ir al estado 29
+    Tipo_matriz    ir al estado 30
+    expresion      ir al estado 145
+    constante      ir al estado 63
+    vector         ir al estado 64
+    matriz         ir al estado 65
+    identificador  ir al estado 66
+
+
+Estado 104
+
+   68 expresion: expresion MAS_MENOS . expresion
+
+    error          desplazar e ir al estado 49
+    INICIOBLOQUE   desplazar e ir al estado 50
+    PAR_IZQUIERDO  desplazar e ir al estado 51
+    TIPO_BASICOS   desplazar e ir al estado 52
+    CORCHETE_IZQ   desplazar e ir al estado 53
+    VAL_LOGICOS    desplazar e ir al estado 54
+    ENTERO         desplazar e ir al estado 55
+    REAL           desplazar e ir al estado 56
+    CARACTER       desplazar e ir al estado 57
+    IDENT          desplazar e ir al estado 41
+    MAS_MENOS      desplazar e ir al estado 59
+    OPUNARIO       desplazar e ir al estado 60
+
+    Tipo_vector    ir al estado 29
+    Tipo_matriz    ir al estado 30
+    expresion      ir al estado 146
+    constante      ir al estado 63
+    vector         ir al estado 64
+    matriz         ir al estado 65
+    identificador  ir al estado 66
+
+
+Estado 105
+
+   67 expresion: expresion OPMAT . expresion
+
+    error          desplazar e ir al estado 49
+    INICIOBLOQUE   desplazar e ir al estado 50
+    PAR_IZQUIERDO  desplazar e ir al estado 51
+    TIPO_BASICOS   desplazar e ir al estado 52
+    CORCHETE_IZQ   desplazar e ir al estado 53
+    VAL_LOGICOS    desplazar e ir al estado 54
+    ENTERO         desplazar e ir al estado 55
+    REAL           desplazar e ir al estado 56
+    CARACTER       desplazar e ir al estado 57
+    IDENT          desplazar e ir al estado 41
+    MAS_MENOS      desplazar e ir al estado 59
+    OPUNARIO       desplazar e ir al estado 60
+
+    Tipo_vector    ir al estado 29
+    Tipo_matriz    ir al estado 30
+    expresion      ir al estado 147
+    constante      ir al estado 63
+    vector         ir al estado 64
+    matriz         ir al estado 65
+    identificador  ir al estado 66
+
+
+Estado 106
+
+   61 expresion: expresion OPMULDIV . expresion
+
+    error          desplazar e ir al estado 49
+    INICIOBLOQUE   desplazar e ir al estado 50
+    PAR_IZQUIERDO  desplazar e ir al estado 51
+    TIPO_BASICOS   desplazar e ir al estado 52
+    CORCHETE_IZQ   desplazar e ir al estado 53
+    VAL_LOGICOS    desplazar e ir al estado 54
+    ENTERO         desplazar e ir al estado 55
+    REAL           desplazar e ir al estado 56
+    CARACTER       desplazar e ir al estado 57
+    IDENT          desplazar e ir al estado 41
+    MAS_MENOS      desplazar e ir al estado 59
+    OPUNARIO       desplazar e ir al estado 60
+
+    Tipo_vector    ir al estado 29
+    Tipo_matriz    ir al estado 30
+    expresion      ir al estado 148
+    constante      ir al estado 63
+    vector         ir al estado 64
+    matriz         ir al estado 65
+    identificador  ir al estado 66
+
+
+Estado 107
+
+   43 sentencia_case_switch: ELEGIR expresion INICIOBLOQUE . Casos FINBLOQUE
+
+    CASO  desplazar e ir al estado 149
+    BASE  desplazar e ir al estado 150
+
+    Casos           ir al estado 151
+    Bloque_de_caso  ir al estado 152
+
+
+Estado 108
+
+   50 sentencia_proc: IDENT PAR_IZQUIERDO argumentos . PAR_DERECHO PYC
+
+    PAR_DERECHO  desplazar e ir al estado 153
+
+
+Estado 109
+
+   51 argumentos: lista_argumentos .
+   53 lista_argumentos: lista_argumentos . COMA expresion
+
+    COMA  desplazar e ir al estado 154
+
+    $default  reduce usando la regla 51 (argumentos)
+
+
+Estado 110
+
+   54 lista_argumentos: expresion .
+   61 expresion: expresion . OPMULDIV expresion
+   62          | expresion . OPIGUAL expresion
+   63          | expresion . OPREL expresion
+   64          | expresion . OPAND expresion
+   65          | expresion . OPOR expresion
+   66          | expresion . OPSOR expresion
+   67          | expresion . OPMAT expresion
+   68          | expresion . MAS_MENOS expresion
+
+    OPOR       desplazar e ir al estado 99
+    OPAND      desplazar e ir al estado 100
+    OPSOR      desplazar e ir al estado 101
+    OPIGUAL    desplazar e ir al estado 102
+    OPREL      desplazar e ir al estado 103
+    MAS_MENOS  desplazar e ir al estado 104
+    OPMAT      desplazar e ir al estado 105
+    OPMULDIV   desplazar e ir al estado 106
+
+    $default  reduce usando la regla 54 (lista_argumentos)
+
+
+Estado 111
+
+   18 Tipo_vector: IDENT CORCHETE_IZQ ENTERO . CORCHETE_DCHO
+   19 Tipo_matriz: IDENT CORCHETE_IZQ ENTERO . COMA ENTERO CORCHETE_DCHO
+
+    COMA           desplazar e ir al estado 155
+    CORCHETE_DCHO  desplazar e ir al estado 156
+
+
+Estado 112
+
+   30 sentencia_asignacion: identificador ASIGNACION expresion . PYC
+   61 expresion: expresion . OPMULDIV expresion
+   62          | expresion . OPIGUAL expresion
+   63          | expresion . OPREL expresion
+   64          | expresion . OPAND expresion
+   65          | expresion . OPOR expresion
+   66          | expresion . OPSOR expresion
+   67          | expresion . OPMAT expresion
+   68          | expresion . MAS_MENOS expresion
+
+    PYC        desplazar e ir al estado 157
+    OPOR       desplazar e ir al estado 99
+    OPAND      desplazar e ir al estado 100
+    OPSOR      desplazar e ir al estado 101
+    OPIGUAL    desplazar e ir al estado 102
+    OPREL      desplazar e ir al estado 103
+    MAS_MENOS  desplazar e ir al estado 104
+    OPMAT      desplazar e ir al estado 105
+    OPMULDIV   desplazar e ir al estado 106
+
+
+Estado 113
+
+   16 lista_identificadores: lista_identificadores COMA identificador .
+
+    $default  reduce usando la regla 16 (lista_identificadores)
+
+
+Estado 114
+
+    8 Declar_subprog: PROCEDIMIENTO IDENT $@2 PAR_IZQUIERDO . lista_expresiones PAR_DERECHO $@3 bloque
+
+    error          desplazar e ir al estado 49
+    INICIOBLOQUE   desplazar e ir al estado 50
+    PAR_IZQUIERDO  desplazar e ir al estado 51
+    TIPO_BASICOS   desplazar e ir al estado 52
+    CORCHETE_IZQ   desplazar e ir al estado 53
+    VAL_LOGICOS    desplazar e ir al estado 54
+    ENTERO         desplazar e ir al estado 55
+    REAL           desplazar e ir al estado 56
+    CARACTER       desplazar e ir al estado 57
+    IDENT          desplazar e ir al estado 41
+    MAS_MENOS      desplazar e ir al estado 59
+    OPUNARIO       desplazar e ir al estado 60
+
+    COMA         reduce usando la regla 57 (lista_expresiones)
+    PAR_DERECHO  reduce usando la regla 57 (lista_expresiones)
+
+    Tipo_vector        ir al estado 29
+    Tipo_matriz        ir al estado 30
+    lista_expresiones  ir al estado 158
+    expresion          ir al estado 159
+    constante          ir al estado 63
+    vector             ir al estado 64
+    matriz             ir al estado 65
+    identificador      ir al estado 66
+
+
+Estado 115
+
+   32 sentencia_if: SI PAR_IZQUIERDO expresion PAR_DERECHO . Sentencia
+   33             | SI PAR_IZQUIERDO expresion PAR_DERECHO . Sentencia SI_NO Sentencia
+
+    error         desplazar e ir al estado 19
+    INICIOBLOQUE  desplazar e ir al estado 6
+    SI            desplazar e ir al estado 21
+    MIENTRAS      desplazar e ir al estado 22
+    ENTRADA       desplazar e ir al estado 23
+    SALIDA        desplazar e ir al estado 24
+    ELEGIR        desplazar e ir al estado 25
+    IDENT         desplazar e ir al estado 26
+
+    bloque                 ir al estado 27
+    Tipo_vector            ir al estado 29
+    Tipo_matriz            ir al estado 30
+    Sentencia              ir al estado 160
+    sentencia_asignacion   ir al estado 33
+    sentencia_if           ir al estado 34
+    sentencia_while        ir al estado 35
+    sentencia_entrada      ir al estado 36
+    sentencia_salida       ir al estado 37
+    sentencia_case_switch  ir al estado 38
+    sentencia_proc         ir al estado 39
+    identificador          ir al estado 40
+
+
+Estado 116
+
+   34 sentencia_while: MIENTRAS PAR_IZQUIERDO expresion PAR_DERECHO . Sentencia
+
+    error         desplazar e ir al estado 19
+    INICIOBLOQUE  desplazar e ir al estado 6
+    SI            desplazar e ir al estado 21
+    MIENTRAS      desplazar e ir al estado 22
+    ENTRADA       desplazar e ir al estado 23
+    SALIDA        desplazar e ir al estado 24
+    ELEGIR        desplazar e ir al estado 25
+    IDENT         desplazar e ir al estado 26
+
+    bloque                 ir al estado 27
+    Tipo_vector            ir al estado 29
+    Tipo_matriz            ir al estado 30
+    Sentencia              ir al estado 161
+    sentencia_asignacion   ir al estado 33
+    sentencia_if           ir al estado 34
+    sentencia_while        ir al estado 35
+    sentencia_entrada      ir al estado 36
+    sentencia_salida       ir al estado 37
+    sentencia_case_switch  ir al estado 38
+    sentencia_proc         ir al estado 39
+    identificador          ir al estado 40
+
+
+Estado 117
+
+   37 lista_entrada: lista_entrada COMA identificador .
+
+    $default  reduce usando la regla 37 (lista_entrada)
+
+
+Estado 118
+
+   83 lista_enteros: lista_enteros . COMA ENTERO
+   96 matriz_enteros: CORCHETE_IZQ lista_enteros . CORCHETE_DCHO
+
+    COMA           desplazar e ir al estado 131
+    CORCHETE_DCHO  desplazar e ir al estado 162
+
+
+Estado 119
+
+   85 lista_caracteres: lista_caracteres . COMA CARACTER
+   98 matriz_caracteres: CORCHETE_IZQ lista_caracteres . CORCHETE_DCHO
+
+    COMA           desplazar e ir al estado 133
+    CORCHETE_DCHO  desplazar e ir al estado 163
+
+
+Estado 120
+
+   87 lista_booleanos: lista_booleanos . COMA VAL_LOGICOS
+  100 matriz_booleanos: CORCHETE_IZQ lista_booleanos . CORCHETE_DCHO
+
+    COMA           desplazar e ir al estado 135
+    CORCHETE_DCHO  desplazar e ir al estado 164
+
+
+Estado 121
+
+   89 lista_reales: lista_reales . COMA REAL
+  102 matriz_reales: CORCHETE_IZQ lista_reales . CORCHETE_DCHO
+
+    COMA           desplazar e ir al estado 137
+    CORCHETE_DCHO  desplazar e ir al estado 165
+
+
+Estado 122
+
+   91 matriz: INICIOBLOQUE matriz_enteros FINBLOQUE .
+
+    $default  reduce usando la regla 91 (matriz)
+
+
+Estado 123
+
+   95 matriz_enteros: matriz_enteros COMA . CORCHETE_IZQ lista_enteros CORCHETE_DCHO
+
+    CORCHETE_IZQ  desplazar e ir al estado 166
+
+
+Estado 124
+
+   92 matriz: INICIOBLOQUE matriz_caracteres FINBLOQUE .
+
+    $default  reduce usando la regla 92 (matriz)
+
+
+Estado 125
+
+   97 matriz_caracteres: matriz_caracteres COMA . CORCHETE_IZQ lista_caracteres CORCHETE_DCHO
+
+    CORCHETE_IZQ  desplazar e ir al estado 167
+
+
+Estado 126
+
+   93 matriz: INICIOBLOQUE matriz_booleanos FINBLOQUE .
+
+    $default  reduce usando la regla 93 (matriz)
+
+
+Estado 127
+
+   99 matriz_booleanos: matriz_booleanos COMA . CORCHETE_IZQ lista_booleanos CORCHETE_DCHO
+
+    CORCHETE_IZQ  desplazar e ir al estado 168
+
+
+Estado 128
+
+   94 matriz: INICIOBLOQUE matriz_reales FINBLOQUE .
+
+    $default  reduce usando la regla 94 (matriz)
+
+
+Estado 129
+
+  101 matriz_reales: matriz_reales COMA . CORCHETE_IZQ lista_reales CORCHETE_DCHO
+
+    CORCHETE_IZQ  desplazar e ir al estado 169
+
+
+Estado 130
+
+   58 expresion: PAR_IZQUIERDO expresion PAR_DERECHO .
+
+    $default  reduce usando la regla 58 (expresion)
+
+
+Estado 131
+
+   83 lista_enteros: lista_enteros COMA . ENTERO
+
+    ENTERO  desplazar e ir al estado 170
+
+
+Estado 132
+
+   79 vector: CORCHETE_IZQ lista_enteros CORCHETE_DCHO .
+
+    $default  reduce usando la regla 79 (vector)
+
+
+Estado 133
+
+   85 lista_caracteres: lista_caracteres COMA . CARACTER
+
+    CARACTER  desplazar e ir al estado 171
+
+
+Estado 134
+
+   80 vector: CORCHETE_IZQ lista_caracteres CORCHETE_DCHO .
+
+    $default  reduce usando la regla 80 (vector)
+
+
+Estado 135
+
+   87 lista_booleanos: lista_booleanos COMA . VAL_LOGICOS
+
+    VAL_LOGICOS  desplazar e ir al estado 172
+
+
+Estado 136
+
+   81 vector: CORCHETE_IZQ lista_booleanos CORCHETE_DCHO .
+
+    $default  reduce usando la regla 81 (vector)
+
+
+Estado 137
+
+   89 lista_reales: lista_reales COMA . REAL
+
+    REAL  desplazar e ir al estado 173
+
+
+Estado 138
+
+   82 vector: CORCHETE_IZQ lista_reales CORCHETE_DCHO .
+
+    $default  reduce usando la regla 82 (vector)
+
+
+Estado 139
+
+   40 lista_expresiones_o_cadena: lista_expresiones_o_cadena COMA CADENA .
+
+    $default  reduce usando la regla 40 (lista_expresiones_o_cadena)
+
+
+Estado 140
+
+   39 lista_expresiones_o_cadena: lista_expresiones_o_cadena COMA expresion .
+   61 expresion: expresion . OPMULDIV expresion
+   62          | expresion . OPIGUAL expresion
+   63          | expresion . OPREL expresion
+   64          | expresion . OPAND expresion
+   65          | expresion . OPOR expresion
+   66          | expresion . OPSOR expresion
+   67          | expresion . OPMAT expresion
+   68          | expresion . MAS_MENOS expresion
+
+    OPOR       desplazar e ir al estado 99
+    OPAND      desplazar e ir al estado 100
+    OPSOR      desplazar e ir al estado 101
+    OPIGUAL    desplazar e ir al estado 102
+    OPREL      desplazar e ir al estado 103
+    MAS_MENOS  desplazar e ir al estado 104
+    OPMAT      desplazar e ir al estado 105
+    OPMULDIV   desplazar e ir al estado 106
+
+    $default  reduce usando la regla 39 (lista_expresiones_o_cadena)
+
+
+Estado 141
+
+   61 expresion: expresion . OPMULDIV expresion
+   62          | expresion . OPIGUAL expresion
+   63          | expresion . OPREL expresion
+   64          | expresion . OPAND expresion
+   65          | expresion . OPOR expresion
+   65          | expresion OPOR expresion .
+   66          | expresion . OPSOR expresion
+   67          | expresion . OPMAT expresion
+   68          | expresion . MAS_MENOS expresion
+
+    OPAND      desplazar e ir al estado 100
+    OPSOR      desplazar e ir al estado 101
+    OPIGUAL    desplazar e ir al estado 102
+    OPREL      desplazar e ir al estado 103
+    MAS_MENOS  desplazar e ir al estado 104
+    OPMAT      desplazar e ir al estado 105
+    OPMULDIV   desplazar e ir al estado 106
+
+    $default  reduce usando la regla 65 (expresion)
+
+
+Estado 142
+
+   61 expresion: expresion . OPMULDIV expresion
+   62          | expresion . OPIGUAL expresion
+   63          | expresion . OPREL expresion
+   64          | expresion . OPAND expresion
+   64          | expresion OPAND expresion .
+   65          | expresion . OPOR expresion
+   66          | expresion . OPSOR expresion
+   67          | expresion . OPMAT expresion
+   68          | expresion . MAS_MENOS expresion
+
+    OPSOR      desplazar e ir al estado 101
+    OPIGUAL    desplazar e ir al estado 102
+    OPREL      desplazar e ir al estado 103
+    MAS_MENOS  desplazar e ir al estado 104
+    OPMAT      desplazar e ir al estado 105
+    OPMULDIV   desplazar e ir al estado 106
+
+    $default  reduce usando la regla 64 (expresion)
+
+
+Estado 143
+
+   61 expresion: expresion . OPMULDIV expresion
+   62          | expresion . OPIGUAL expresion
+   63          | expresion . OPREL expresion
+   64          | expresion . OPAND expresion
+   65          | expresion . OPOR expresion
+   66          | expresion . OPSOR expresion
+   66          | expresion OPSOR expresion .
+   67          | expresion . OPMAT expresion
+   68          | expresion . MAS_MENOS expresion
+
+    OPIGUAL    desplazar e ir al estado 102
+    OPREL      desplazar e ir al estado 103
+    MAS_MENOS  desplazar e ir al estado 104
+    OPMAT      desplazar e ir al estado 105
+    OPMULDIV   desplazar e ir al estado 106
+
+    $default  reduce usando la regla 66 (expresion)
+
+
+Estado 144
+
+   61 expresion: expresion . OPMULDIV expresion
+   62          | expresion . OPIGUAL expresion
+   62          | expresion OPIGUAL expresion .
+   63          | expresion . OPREL expresion
+   64          | expresion . OPAND expresion
+   65          | expresion . OPOR expresion
+   66          | expresion . OPSOR expresion
+   67          | expresion . OPMAT expresion
+   68          | expresion . MAS_MENOS expresion
+
+    OPREL      desplazar e ir al estado 103
+    MAS_MENOS  desplazar e ir al estado 104
+    OPMAT      desplazar e ir al estado 105
+    OPMULDIV   desplazar e ir al estado 106
+
+    $default  reduce usando la regla 62 (expresion)
+
+
+Estado 145
+
+   61 expresion: expresion . OPMULDIV expresion
+   62          | expresion . OPIGUAL expresion
+   63          | expresion . OPREL expresion
+   63          | expresion OPREL expresion .
+   64          | expresion . OPAND expresion
+   65          | expresion . OPOR expresion
+   66          | expresion . OPSOR expresion
+   67          | expresion . OPMAT expresion
+   68          | expresion . MAS_MENOS expresion
+
+    MAS_MENOS  desplazar e ir al estado 104
+    OPMAT      desplazar e ir al estado 105
+    OPMULDIV   desplazar e ir al estado 106
+
+    $default  reduce usando la regla 63 (expresion)
+
+
+Estado 146
+
+   61 expresion: expresion . OPMULDIV expresion
+   62          | expresion . OPIGUAL expresion
+   63          | expresion . OPREL expresion
+   64          | expresion . OPAND expresion
+   65          | expresion . OPOR expresion
+   66          | expresion . OPSOR expresion
+   67          | expresion . OPMAT expresion
+   68          | expresion . MAS_MENOS expresion
+   68          | expresion MAS_MENOS expresion .
+
+    OPMAT     desplazar e ir al estado 105
+    OPMULDIV  desplazar e ir al estado 106
+
+    $default  reduce usando la regla 68 (expresion)
+
+
+Estado 147
+
+   61 expresion: expresion . OPMULDIV expresion
+   62          | expresion . OPIGUAL expresion
+   63          | expresion . OPREL expresion
+   64          | expresion . OPAND expresion
+   65          | expresion . OPOR expresion
+   66          | expresion . OPSOR expresion
+   67          | expresion . OPMAT expresion
+   67          | expresion OPMAT expresion .
+   68          | expresion . MAS_MENOS expresion
+
+    OPMULDIV  desplazar e ir al estado 106
+
+    $default  reduce usando la regla 67 (expresion)
+
+
+Estado 148
+
+   61 expresion: expresion . OPMULDIV expresion
+   61          | expresion OPMULDIV expresion .
+   62          | expresion . OPIGUAL expresion
+   63          | expresion . OPREL expresion
+   64          | expresion . OPAND expresion
+   65          | expresion . OPOR expresion
+   66          | expresion . OPSOR expresion
+   67          | expresion . OPMAT expresion
+   68          | expresion . MAS_MENOS expresion
+
+    $default  reduce usando la regla 61 (expresion)
+
+
+Estado 149
+
+   46 Bloque_de_caso: CASO . constante DOSPUNTOS Sentencias SALIR PYC
+   47               | CASO . constante DOSPUNTOS Sentencias
+
+    INICIOBLOQUE  desplazar e ir al estado 50
+    CORCHETE_IZQ  desplazar e ir al estado 53
+    VAL_LOGICOS   desplazar e ir al estado 54
+    ENTERO        desplazar e ir al estado 55
+    REAL          desplazar e ir al estado 56
+    CARACTER      desplazar e ir al estado 57
+
+    constante  ir al estado 174
+    vector     ir al estado 64
+    matriz     ir al estado 65
+
+
+Estado 150
+
+   48 Bloque_de_caso: BASE . DOSPUNTOS Sentencias SALIR PYC
+   49               | BASE . Sentencias
+
+    error         desplazar e ir al estado 19
+    INICIOBLOQUE  desplazar e ir al estado 6
+    SI            desplazar e ir al estado 21
+    MIENTRAS      desplazar e ir al estado 22
+    ENTRADA       desplazar e ir al estado 23
+    SALIDA        desplazar e ir al estado 24
+    ELEGIR        desplazar e ir al estado 25
+    IDENT         desplazar e ir al estado 26
+    DOSPUNTOS     desplazar e ir al estado 175
+
+    bloque                 ir al estado 27
+    Tipo_vector            ir al estado 29
+    Tipo_matriz            ir al estado 30
+    Sentencias             ir al estado 176
+    Sentencia              ir al estado 32
+    sentencia_asignacion   ir al estado 33
+    sentencia_if           ir al estado 34
+    sentencia_while        ir al estado 35
+    sentencia_entrada      ir al estado 36
+    sentencia_salida       ir al estado 37
+    sentencia_case_switch  ir al estado 38
+    sentencia_proc         ir al estado 39
+    identificador          ir al estado 40
+
+
+Estado 151
+
+   43 sentencia_case_switch: ELEGIR expresion INICIOBLOQUE Casos . FINBLOQUE
+   44 Casos: Casos . Bloque_de_caso
+
+    FINBLOQUE  desplazar e ir al estado 177
+    CASO       desplazar e ir al estado 149
+    BASE       desplazar e ir al estado 150
+
+    Bloque_de_caso  ir al estado 178
+
+
+Estado 152
+
+   45 Casos: Bloque_de_caso .
+
+    $default  reduce usando la regla 45 (Casos)
+
+
+Estado 153
+
+   50 sentencia_proc: IDENT PAR_IZQUIERDO argumentos PAR_DERECHO . PYC
+
+    PYC  desplazar e ir al estado 179
+
+
+Estado 154
+
+   53 lista_argumentos: lista_argumentos COMA . expresion
+
+    error          desplazar e ir al estado 49
+    INICIOBLOQUE   desplazar e ir al estado 50
+    PAR_IZQUIERDO  desplazar e ir al estado 51
+    TIPO_BASICOS   desplazar e ir al estado 52
+    CORCHETE_IZQ   desplazar e ir al estado 53
+    VAL_LOGICOS    desplazar e ir al estado 54
+    ENTERO         desplazar e ir al estado 55
+    REAL           desplazar e ir al estado 56
+    CARACTER       desplazar e ir al estado 57
+    IDENT          desplazar e ir al estado 41
+    MAS_MENOS      desplazar e ir al estado 59
+    OPUNARIO       desplazar e ir al estado 60
+
+    Tipo_vector    ir al estado 29
+    Tipo_matriz    ir al estado 30
+    expresion      ir al estado 180
+    constante      ir al estado 63
+    vector         ir al estado 64
+    matriz         ir al estado 65
+    identificador  ir al estado 66
+
+
+Estado 155
+
+   19 Tipo_matriz: IDENT CORCHETE_IZQ ENTERO COMA . ENTERO CORCHETE_DCHO
+
+    ENTERO  desplazar e ir al estado 181
+
+
+Estado 156
+
+   18 Tipo_vector: IDENT CORCHETE_IZQ ENTERO CORCHETE_DCHO .
+
+    $default  reduce usando la regla 18 (Tipo_vector)
+
+
+Estado 157
+
+   30 sentencia_asignacion: identificador ASIGNACION expresion PYC .
+
+    $default  reduce usando la regla 30 (sentencia_asignacion)
+
+
+Estado 158
+
+    8 Declar_subprog: PROCEDIMIENTO IDENT $@2 PAR_IZQUIERDO lista_expresiones . PAR_DERECHO $@3 bloque
+   55 lista_expresiones: lista_expresiones . COMA expresion
+
+    COMA         desplazar e ir al estado 182
+    PAR_DERECHO  desplazar e ir al estado 183
+
+
+Estado 159
+
+   56 lista_expresiones: expresion .
+   61 expresion: expresion . OPMULDIV expresion
+   62          | expresion . OPIGUAL expresion
+   63          | expresion . OPREL expresion
+   64          | expresion . OPAND expresion
+   65          | expresion . OPOR expresion
+   66          | expresion . OPSOR expresion
+   67          | expresion . OPMAT expresion
+   68          | expresion . MAS_MENOS expresion
+
+    OPOR       desplazar e ir al estado 99
+    OPAND      desplazar e ir al estado 100
+    OPSOR      desplazar e ir al estado 101
+    OPIGUAL    desplazar e ir al estado 102
+    OPREL      desplazar e ir al estado 103
+    MAS_MENOS  desplazar e ir al estado 104
+    OPMAT      desplazar e ir al estado 105
+    OPMULDIV   desplazar e ir al estado 106
+
+    $default  reduce usando la regla 56 (lista_expresiones)
+
+
+Estado 160
+
+   32 sentencia_if: SI PAR_IZQUIERDO expresion PAR_DERECHO Sentencia .
+   33             | SI PAR_IZQUIERDO expresion PAR_DERECHO Sentencia . SI_NO Sentencia
+
+    SI_NO  desplazar e ir al estado 184
+
+    SI_NO     [reduce usando la regla 32 (sentencia_if)]
+    $default  reduce usando la regla 32 (sentencia_if)
+
+
+Estado 161
+
+   34 sentencia_while: MIENTRAS PAR_IZQUIERDO expresion PAR_DERECHO Sentencia .
+
+    $default  reduce usando la regla 34 (sentencia_while)
+
+
+Estado 162
+
+   96 matriz_enteros: CORCHETE_IZQ lista_enteros CORCHETE_DCHO .
+
+    $default  reduce usando la regla 96 (matriz_enteros)
+
+
+Estado 163
+
+   98 matriz_caracteres: CORCHETE_IZQ lista_caracteres CORCHETE_DCHO .
+
+    $default  reduce usando la regla 98 (matriz_caracteres)
+
+
+Estado 164
+
+  100 matriz_booleanos: CORCHETE_IZQ lista_booleanos CORCHETE_DCHO .
+
+    $default  reduce usando la regla 100 (matriz_booleanos)
+
+
+Estado 165
+
+  102 matriz_reales: CORCHETE_IZQ lista_reales CORCHETE_DCHO .
+
+    $default  reduce usando la regla 102 (matriz_reales)
+
+
+Estado 166
+
+   95 matriz_enteros: matriz_enteros COMA CORCHETE_IZQ . lista_enteros CORCHETE_DCHO
+
+    ENTERO  desplazar e ir al estado 88
+
+    lista_enteros  ir al estado 185
+
+
+Estado 167
+
+   97 matriz_caracteres: matriz_caracteres COMA CORCHETE_IZQ . lista_caracteres CORCHETE_DCHO
+
+    CARACTER  desplazar e ir al estado 90
+
+    lista_caracteres  ir al estado 186
+
+
+Estado 168
+
+   99 matriz_booleanos: matriz_booleanos COMA CORCHETE_IZQ . lista_booleanos CORCHETE_DCHO
+
+    VAL_LOGICOS  desplazar e ir al estado 87
+
+    lista_booleanos  ir al estado 187
+
+
+Estado 169
+
+  101 matriz_reales: matriz_reales COMA CORCHETE_IZQ . lista_reales CORCHETE_DCHO
+
+    REAL  desplazar e ir al estado 89
+
+    lista_reales  ir al estado 188
+
+
+Estado 170
+
+   83 lista_enteros: lista_enteros COMA ENTERO .
+
+    $default  reduce usando la regla 83 (lista_enteros)
+
+
+Estado 171
+
+   85 lista_caracteres: lista_caracteres COMA CARACTER .
+
+    $default  reduce usando la regla 85 (lista_caracteres)
+
+
+Estado 172
+
+   87 lista_booleanos: lista_booleanos COMA VAL_LOGICOS .
+
+    $default  reduce usando la regla 87 (lista_booleanos)
+
+
+Estado 173
+
+   89 lista_reales: lista_reales COMA REAL .
+
+    $default  reduce usando la regla 89 (lista_reales)
+
+
+Estado 174
+
+   46 Bloque_de_caso: CASO constante . DOSPUNTOS Sentencias SALIR PYC
+   47               | CASO constante . DOSPUNTOS Sentencias
+
+    DOSPUNTOS  desplazar e ir al estado 189
+
+
+Estado 175
+
+   48 Bloque_de_caso: BASE DOSPUNTOS . Sentencias SALIR PYC
+
+    error         desplazar e ir al estado 19
+    INICIOBLOQUE  desplazar e ir al estado 6
+    SI            desplazar e ir al estado 21
+    MIENTRAS      desplazar e ir al estado 22
+    ENTRADA       desplazar e ir al estado 23
+    SALIDA        desplazar e ir al estado 24
+    ELEGIR        desplazar e ir al estado 25
+    IDENT         desplazar e ir al estado 26
+
+    bloque                 ir al estado 27
+    Tipo_vector            ir al estado 29
+    Tipo_matriz            ir al estado 30
+    Sentencias             ir al estado 190
+    Sentencia              ir al estado 32
+    sentencia_asignacion   ir al estado 33
+    sentencia_if           ir al estado 34
+    sentencia_while        ir al estado 35
+    sentencia_entrada      ir al estado 36
+    sentencia_salida       ir al estado 37
+    sentencia_case_switch  ir al estado 38
+    sentencia_proc         ir al estado 39
+    identificador          ir al estado 40
+
+
+Estado 176
+
+   20 Sentencias: Sentencias . Sentencia
+   49 Bloque_de_caso: BASE Sentencias .
+
+    error         desplazar e ir al estado 19
+    INICIOBLOQUE  desplazar e ir al estado 6
+    SI            desplazar e ir al estado 21
+    MIENTRAS      desplazar e ir al estado 22
+    ENTRADA       desplazar e ir al estado 23
+    SALIDA        desplazar e ir al estado 24
+    ELEGIR        desplazar e ir al estado 25
+    IDENT         desplazar e ir al estado 26
+
+    FINBLOQUE  reduce usando la regla 49 (Bloque_de_caso)
+    CASO       reduce usando la regla 49 (Bloque_de_caso)
+    BASE       reduce usando la regla 49 (Bloque_de_caso)
+
+    bloque                 ir al estado 27
+    Tipo_vector            ir al estado 29
+    Tipo_matriz            ir al estado 30
+    Sentencia              ir al estado 71
+    sentencia_asignacion   ir al estado 33
+    sentencia_if           ir al estado 34
+    sentencia_while        ir al estado 35
+    sentencia_entrada      ir al estado 36
+    sentencia_salida       ir al estado 37
+    sentencia_case_switch  ir al estado 38
+    sentencia_proc         ir al estado 39
+    identificador          ir al estado 40
+
+
+Estado 177
+
+   43 sentencia_case_switch: ELEGIR expresion INICIOBLOQUE Casos FINBLOQUE .
+
+    $default  reduce usando la regla 43 (sentencia_case_switch)
+
+
+Estado 178
+
+   44 Casos: Casos Bloque_de_caso .
+
+    $default  reduce usando la regla 44 (Casos)
+
+
+Estado 179
+
+   50 sentencia_proc: IDENT PAR_IZQUIERDO argumentos PAR_DERECHO PYC .
+
+    $default  reduce usando la regla 50 (sentencia_proc)
+
+
+Estado 180
+
+   53 lista_argumentos: lista_argumentos COMA expresion .
+   61 expresion: expresion . OPMULDIV expresion
+   62          | expresion . OPIGUAL expresion
+   63          | expresion . OPREL expresion
+   64          | expresion . OPAND expresion
+   65          | expresion . OPOR expresion
+   66          | expresion . OPSOR expresion
+   67          | expresion . OPMAT expresion
+   68          | expresion . MAS_MENOS expresion
+
+    OPOR       desplazar e ir al estado 99
+    OPAND      desplazar e ir al estado 100
+    OPSOR      desplazar e ir al estado 101
+    OPIGUAL    desplazar e ir al estado 102
+    OPREL      desplazar e ir al estado 103
+    MAS_MENOS  desplazar e ir al estado 104
+    OPMAT      desplazar e ir al estado 105
+    OPMULDIV   desplazar e ir al estado 106
+
+    $default  reduce usando la regla 53 (lista_argumentos)
+
+
+Estado 181
+
+   19 Tipo_matriz: IDENT CORCHETE_IZQ ENTERO COMA ENTERO . CORCHETE_DCHO
+
+    CORCHETE_DCHO  desplazar e ir al estado 191
+
+
+Estado 182
+
+   55 lista_expresiones: lista_expresiones COMA . expresion
+
+    error          desplazar e ir al estado 49
+    INICIOBLOQUE   desplazar e ir al estado 50
+    PAR_IZQUIERDO  desplazar e ir al estado 51
+    TIPO_BASICOS   desplazar e ir al estado 52
+    CORCHETE_IZQ   desplazar e ir al estado 53
+    VAL_LOGICOS    desplazar e ir al estado 54
+    ENTERO         desplazar e ir al estado 55
+    REAL           desplazar e ir al estado 56
+    CARACTER       desplazar e ir al estado 57
+    IDENT          desplazar e ir al estado 41
+    MAS_MENOS      desplazar e ir al estado 59
+    OPUNARIO       desplazar e ir al estado 60
+
+    Tipo_vector    ir al estado 29
+    Tipo_matriz    ir al estado 30
+    expresion      ir al estado 192
+    constante      ir al estado 63
+    vector         ir al estado 64
+    matriz         ir al estado 65
+    identificador  ir al estado 66
+
+
+Estado 183
+
+    8 Declar_subprog: PROCEDIMIENTO IDENT $@2 PAR_IZQUIERDO lista_expresiones PAR_DERECHO . $@3 bloque
+
+    $default  reduce usando la regla 7 ($@3)
+
+    $@3  ir al estado 193
+
+
+Estado 184
+
+   33 sentencia_if: SI PAR_IZQUIERDO expresion PAR_DERECHO Sentencia SI_NO . Sentencia
+
+    error         desplazar e ir al estado 19
+    INICIOBLOQUE  desplazar e ir al estado 6
+    SI            desplazar e ir al estado 21
+    MIENTRAS      desplazar e ir al estado 22
+    ENTRADA       desplazar e ir al estado 23
+    SALIDA        desplazar e ir al estado 24
+    ELEGIR        desplazar e ir al estado 25
+    IDENT         desplazar e ir al estado 26
+
+    bloque                 ir al estado 27
+    Tipo_vector            ir al estado 29
+    Tipo_matriz            ir al estado 30
+    Sentencia              ir al estado 194
+    sentencia_asignacion   ir al estado 33
+    sentencia_if           ir al estado 34
+    sentencia_while        ir al estado 35
+    sentencia_entrada      ir al estado 36
+    sentencia_salida       ir al estado 37
+    sentencia_case_switch  ir al estado 38
+    sentencia_proc         ir al estado 39
+    identificador          ir al estado 40
+
+
+Estado 185
+
+   83 lista_enteros: lista_enteros . COMA ENTERO
+   95 matriz_enteros: matriz_enteros COMA CORCHETE_IZQ lista_enteros . CORCHETE_DCHO
+
+    COMA           desplazar e ir al estado 131
+    CORCHETE_DCHO  desplazar e ir al estado 195
+
+
+Estado 186
+
+   85 lista_caracteres: lista_caracteres . COMA CARACTER
+   97 matriz_caracteres: matriz_caracteres COMA CORCHETE_IZQ lista_caracteres . CORCHETE_DCHO
+
+    COMA           desplazar e ir al estado 133
+    CORCHETE_DCHO  desplazar e ir al estado 196
+
+
+Estado 187
+
+   87 lista_booleanos: lista_booleanos . COMA VAL_LOGICOS
+   99 matriz_booleanos: matriz_booleanos COMA CORCHETE_IZQ lista_booleanos . CORCHETE_DCHO
+
+    COMA           desplazar e ir al estado 135
+    CORCHETE_DCHO  desplazar e ir al estado 197
+
+
+Estado 188
+
+   89 lista_reales: lista_reales . COMA REAL
+  101 matriz_reales: matriz_reales COMA CORCHETE_IZQ lista_reales . CORCHETE_DCHO
+
+    COMA           desplazar e ir al estado 137
+    CORCHETE_DCHO  desplazar e ir al estado 198
+
+
+Estado 189
+
+   46 Bloque_de_caso: CASO constante DOSPUNTOS . Sentencias SALIR PYC
+   47               | CASO constante DOSPUNTOS . Sentencias
+
+    error         desplazar e ir al estado 19
+    INICIOBLOQUE  desplazar e ir al estado 6
+    SI            desplazar e ir al estado 21
+    MIENTRAS      desplazar e ir al estado 22
+    ENTRADA       desplazar e ir al estado 23
+    SALIDA        desplazar e ir al estado 24
+    ELEGIR        desplazar e ir al estado 25
+    IDENT         desplazar e ir al estado 26
+
+    bloque                 ir al estado 27
+    Tipo_vector            ir al estado 29
+    Tipo_matriz            ir al estado 30
+    Sentencias             ir al estado 199
+    Sentencia              ir al estado 32
+    sentencia_asignacion   ir al estado 33
+    sentencia_if           ir al estado 34
+    sentencia_while        ir al estado 35
+    sentencia_entrada      ir al estado 36
+    sentencia_salida       ir al estado 37
+    sentencia_case_switch  ir al estado 38
+    sentencia_proc         ir al estado 39
+    identificador          ir al estado 40
+
+
+Estado 190
+
+   20 Sentencias: Sentencias . Sentencia
+   48 Bloque_de_caso: BASE DOSPUNTOS Sentencias . SALIR PYC
+
+    error         desplazar e ir al estado 19
+    INICIOBLOQUE  desplazar e ir al estado 6
+    SI            desplazar e ir al estado 21
+    MIENTRAS      desplazar e ir al estado 22
+    ENTRADA       desplazar e ir al estado 23
+    SALIDA        desplazar e ir al estado 24
+    ELEGIR        desplazar e ir al estado 25
+    SALIR         desplazar e ir al estado 200
+    IDENT         desplazar e ir al estado 26
+
+    bloque                 ir al estado 27
+    Tipo_vector            ir al estado 29
+    Tipo_matriz            ir al estado 30
+    Sentencia              ir al estado 71
+    sentencia_asignacion   ir al estado 33
+    sentencia_if           ir al estado 34
+    sentencia_while        ir al estado 35
+    sentencia_entrada      ir al estado 36
+    sentencia_salida       ir al estado 37
+    sentencia_case_switch  ir al estado 38
+    sentencia_proc         ir al estado 39
+    identificador          ir al estado 40
+
+
+Estado 191
+
+   19 Tipo_matriz: IDENT CORCHETE_IZQ ENTERO COMA ENTERO CORCHETE_DCHO .
+
+    $default  reduce usando la regla 19 (Tipo_matriz)
+
+
+Estado 192
+
+   55 lista_expresiones: lista_expresiones COMA expresion .
+   61 expresion: expresion . OPMULDIV expresion
+   62          | expresion . OPIGUAL expresion
+   63          | expresion . OPREL expresion
+   64          | expresion . OPAND expresion
+   65          | expresion . OPOR expresion
+   66          | expresion . OPSOR expresion
+   67          | expresion . OPMAT expresion
+   68          | expresion . MAS_MENOS expresion
+
+    OPOR       desplazar e ir al estado 99
+    OPAND      desplazar e ir al estado 100
+    OPSOR      desplazar e ir al estado 101
+    OPIGUAL    desplazar e ir al estado 102
+    OPREL      desplazar e ir al estado 103
+    MAS_MENOS  desplazar e ir al estado 104
+    OPMAT      desplazar e ir al estado 105
+    OPMULDIV   desplazar e ir al estado 106
+
+    $default  reduce usando la regla 55 (lista_expresiones)
+
+
+Estado 193
+
+    8 Declar_subprog: PROCEDIMIENTO IDENT $@2 PAR_IZQUIERDO lista_expresiones PAR_DERECHO $@3 . bloque
+
+    INICIOBLOQUE  desplazar e ir al estado 6
+
+    bloque  ir al estado 201
+
+
+Estado 194
+
+   33 sentencia_if: SI PAR_IZQUIERDO expresion PAR_DERECHO Sentencia SI_NO Sentencia .
+
+    $default  reduce usando la regla 33 (sentencia_if)
+
+
+Estado 195
+
+   95 matriz_enteros: matriz_enteros COMA CORCHETE_IZQ lista_enteros CORCHETE_DCHO .
+
+    $default  reduce usando la regla 95 (matriz_enteros)
+
+
+Estado 196
+
+   97 matriz_caracteres: matriz_caracteres COMA CORCHETE_IZQ lista_caracteres CORCHETE_DCHO .
+
+    $default  reduce usando la regla 97 (matriz_caracteres)
+
+
+Estado 197
+
+   99 matriz_booleanos: matriz_booleanos COMA CORCHETE_IZQ lista_booleanos CORCHETE_DCHO .
+
+    $default  reduce usando la regla 99 (matriz_booleanos)
+
+
+Estado 198
+
+  101 matriz_reales: matriz_reales COMA CORCHETE_IZQ lista_reales CORCHETE_DCHO .
+
+    $default  reduce usando la regla 101 (matriz_reales)
+
+
+Estado 199
+
+   20 Sentencias: Sentencias . Sentencia
+   46 Bloque_de_caso: CASO constante DOSPUNTOS Sentencias . SALIR PYC
+   47               | CASO constante DOSPUNTOS Sentencias .
+
+    error         desplazar e ir al estado 19
+    INICIOBLOQUE  desplazar e ir al estado 6
+    SI            desplazar e ir al estado 21
+    MIENTRAS      desplazar e ir al estado 22
+    ENTRADA       desplazar e ir al estado 23
+    SALIDA        desplazar e ir al estado 24
+    ELEGIR        desplazar e ir al estado 25
+    SALIR         desplazar e ir al estado 202
+    IDENT         desplazar e ir al estado 26
+
+    FINBLOQUE  reduce usando la regla 47 (Bloque_de_caso)
+    CASO       reduce usando la regla 47 (Bloque_de_caso)
+    BASE       reduce usando la regla 47 (Bloque_de_caso)
+
+    bloque                 ir al estado 27
+    Tipo_vector            ir al estado 29
+    Tipo_matriz            ir al estado 30
+    Sentencia              ir al estado 71
+    sentencia_asignacion   ir al estado 33
+    sentencia_if           ir al estado 34
+    sentencia_while        ir al estado 35
+    sentencia_entrada      ir al estado 36
+    sentencia_salida       ir al estado 37
+    sentencia_case_switch  ir al estado 38
+    sentencia_proc         ir al estado 39
+    identificador          ir al estado 40
+
+
+Estado 200
+
+   48 Bloque_de_caso: BASE DOSPUNTOS Sentencias SALIR . PYC
+
+    PYC  desplazar e ir al estado 203
+
+
+Estado 201
+
+    8 Declar_subprog: PROCEDIMIENTO IDENT $@2 PAR_IZQUIERDO lista_expresiones PAR_DERECHO $@3 bloque .
+
+    $default  reduce usando la regla 8 (Declar_subprog)
+
+
+Estado 202
+
+   46 Bloque_de_caso: CASO constante DOSPUNTOS Sentencias SALIR . PYC
+
+    PYC  desplazar e ir al estado 204
+
+
+Estado 203
+
+   48 Bloque_de_caso: BASE DOSPUNTOS Sentencias SALIR PYC .
+
+    $default  reduce usando la regla 48 (Bloque_de_caso)
+
+
+Estado 204
+
+   46 Bloque_de_caso: CASO constante DOSPUNTOS Sentencias SALIR PYC .
+
+    $default  reduce usando la regla 46 (Bloque_de_caso)

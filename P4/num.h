@@ -1,0 +1,33 @@
+/*num.h */
+
+#define PRINCIPAL   	    256
+#define INICIOBLOQUE   		257
+#define FINBLOQUE       	258 
+#define PYC  				259 
+#define COMA		      	260
+#define PAR_IZQUIERDO      	261
+#define PAR_DERECHO     	262
+#define CORCHETE_IZQ        263 
+#define CORCHETE_DCHO       264 
+#define INI_VARLOCAL     	265
+#define FIN_VARLOCAL      	266 
+#define TIPO_BASICOS        267
+#define ASIGNACION    		268
+#define SI      			269
+#define SI_NO      	        270
+#define MIENTRAS          	271
+#define ENTRADA      	    272
+#define SALIDA       		273
+#define ELEGIR      		274
+#define CASO        		275
+#define SALIR        		276
+#define OPUNARIO          	277 
+#define OPBINARIO       	278
+#define VAL_LOGICOS      	279 
+#define ENTERO       		280
+#define REAL        		281 
+#define CARACTER     		282 
+#define CADENA      		283 
+#define MAS_MENOS      		284
+#define IDENT 				285
+#define PROCEDIMIENTO		286
